@@ -58,11 +58,23 @@ namespace Interact {
 		{
 			show();
 			int cmd;
-			while (std::cin >> cmd)
+			while (std::wcin >> cmd || std::wcin.fail())
 			{
-				if (menu_items.find(cmd) == menu_items.end())
+				if (std::wcin.eof())
 				{
-					std::wcout << L"不存在此项" << std::endl;
+					std::wcout << L"此菜单的交互已取消\n";
+					std::wcin.clear();
+					break;
+				}
+				if (std::wcin.fail())
+				{
+					std::wcout << L"请输入数字序号\n";
+					std::wcin.clear();
+					std::wcin.get();
+				}
+				else if (menu_items.find(cmd) == menu_items.end())
+				{
+					std::wcout << L"不存在此项\n";
 				}
 				else
 				{
@@ -83,7 +95,7 @@ namespace Interact {
 		std::function<void(T)> input_callback;
 	public:
 		Input(std::wstring placeholder, std::function<void(T)> callback) : input_placeholder(std::move(placeholder)),
-			input_callback(callback)
+			input_callback(std::move(callback))
 		{}
 
 		void operator()()
@@ -91,6 +103,19 @@ namespace Interact {
 			std::wcout << input_placeholder << ":\n";
 			T in;
 			std::wcin >> in;
+			if (std::wcin.eof())
+			{
+				std::wcout << L"本次输入已取消\n";
+				std::wcin.clear();
+				return;
+			}
+			if (std::wcin.fail())
+			{
+				std::wcout << L"错误的输入，本次输入已终止\n";
+				std::wcin.clear();
+				std::wcin.get();
+				return;
+			}
 			input_callback(in);
 		}
 	};
@@ -110,6 +135,12 @@ namespace Interact {
 			std::wstring in;
 			while (std::wcin.peek() == '\n')std::wcin.get();
 			std::getline(std::wcin, in);
+			if (std::wcin.eof())
+			{
+				std::wcout << L"本次输入已取消\n";
+				std::wcin.clear();
+				return;
+			}
 			input_callback(in);
 		}
 	};
@@ -127,6 +158,19 @@ namespace Interact {
 			{
 				std::wcout << f << ": ";
 				std::wcin >> data[f];
+				if (std::wcin.eof())
+				{
+					std::wcout << L"本次输入已取消\n";
+					std::wcin.clear();
+					return;
+				}
+				if (std::wcin.fail())
+				{
+					std::wcout << L"错误的输入，本次输入已被终止\n";
+					std::wcin.clear();
+					std::wcin.get();
+					return;
+				}
 			}
 			callback(data);
 		}

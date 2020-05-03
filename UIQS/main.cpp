@@ -70,6 +70,7 @@ int main()
 				item(3, L"增加信息",[] {
 					Form<University>([&](const University& val) {
 						dataBase.insert(val);
+						Output(L"信息已添加")();
 					})();
 				}),
 				item(4, L"返回上级菜单")

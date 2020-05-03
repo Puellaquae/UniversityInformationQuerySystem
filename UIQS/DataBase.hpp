@@ -64,7 +64,10 @@ public:
 	}
 	DataBase() = default;
 	DataBase(const DataBase<T>& db) :DataBase(db.raw) {}
-	DataBase(DataBase&& db) noexcept :DataBase(std::move(db.raw)) {}
+	DataBase(DataBase&& db) noexcept
+	{
+		raw = db.raw;
+	}
 	DataBase<T>& operator=(const DataBase<T>& db)
 	{
 		if (&db != this)

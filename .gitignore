@@ -338,5 +338,7 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
 *.doc
 *.docx
+C++程序设计课程设计-课程设计报告 高校信息查询系统.doc
