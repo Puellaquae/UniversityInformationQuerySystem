@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <utility>
 
 struct University
@@ -57,22 +57,22 @@ struct University
 	}
 	std::wstring& operator[](const std::wstring& index)
 	{
-		if (index == L"±àºÅ")return id;
-		if (index == L"Ãû³Æ")return name;
-		if (index == L"µØÖ·")return address;
-		if (index == L"Ê¡·İ")return province;
-		if (index == L"½¨Ğ£Ê±¼ä")return found_date;
-		if (index == L"ÍøÖ·")return website;
+		if (index == L"ç¼–å·")return id;
+		if (index == L"åç§°")return name;
+		if (index == L"åœ°å€")return address;
+		if (index == L"çœä»½")return province;
+		if (index == L"å»ºæ ¡æ—¶é—´")return found_date;
+		if (index == L"ç½‘å€")return website;
 	}
 	std::wstring operator[](const std::wstring& index) const
 	{
-		if (index == L"±àºÅ")return id;
-		if (index == L"Ãû³Æ")return name;
-		if (index == L"µØÖ·")return address;
-		if (index == L"Ê¡·İ")return province;
-		if (index == L"½¨Ğ£Ê±¼ä")return found_date;
-		if (index == L"ÍøÖ·")return website;
+		if (index == L"ç¼–å·")return id;
+		if (index == L"åç§°")return name;
+		if (index == L"åœ°å€")return address;
+		if (index == L"çœä»½")return province;
+		if (index == L"å»ºæ ¡æ—¶é—´")return found_date;
+		if (index == L"ç½‘å€")return website;
 	}
 	static const std::vector<std::wstring> field;
 };
-const std::vector<std::wstring> University::field = { L"±àºÅ",L"Ãû³Æ",L"µØÖ·",L"Ê¡·İ",L"½¨Ğ£Ê±¼ä",L"ÍøÖ·" };
+const std::vector<std::wstring> University::field = { L"ç¼–å·",L"åç§°",L"åœ°å€",L"çœä»½",L"å»ºæ ¡æ—¶é—´",L"ç½‘å€" };

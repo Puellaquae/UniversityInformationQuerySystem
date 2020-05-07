@@ -1,4 +1,5 @@
-#pragma once
+Ôªø#pragma once
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include "LinkList.hpp"
@@ -11,15 +12,11 @@ class DataBase
 	LinkList<T> raw{};
 	explicit DataBase(LinkList<T> list) :raw(std::move(list)) {}
 public:
-	enum EXEC_RETURN
-	{
-
-	};
 	void save()
 	{
 		if (file_path.empty())return;
 		std::wofstream ofs(file_path, std::ios::out | std::ios::trunc);
-		ofs.imbue(std::locale("zh_CN"));
+		ofs.imbue(std::locale(ofs.getloc()));
 		if (ofs.is_open())
 		{
 			for (const auto& it : raw)
@@ -31,7 +28,7 @@ public:
 	void save(const std::wstring& saveFilePath)
 	{
 		std::wofstream ofs(saveFilePath, std::ios::out | std::ios::trunc);
-		ofs.imbue(std::locale("zh_CN"));
+		//ofs.imbue(std::locale("zh_CN.UTF8"));
 		if (ofs.is_open())
 		{
 			for (const auto& it : raw)
@@ -90,8 +87,31 @@ public:
 	}
 	explicit DataBase(std::wstring filepath) :file_path(std::move(filepath))
 	{
+		std::string encoding;
+		{
+			std::ifstream encodingTest(file_path, std::ios::binary);
+			unsigned char byte;
+			encodingTest.read(reinterpret_cast<char*>(&byte), sizeof(byte));
+			int bom = byte << 8;
+			encodingTest.read(reinterpret_cast<char*>(&byte), sizeof(byte));
+			bom |= byte;
+			switch (bom)
+			{
+			case 0xfffe:  //65534
+				encoding = ".UTF16LE";
+				break;
+			case 0xfeff://65279
+				encoding = ".UTF16BE";
+				break;
+			case 0xefbb://61371
+				encoding = ".UTF8";
+				break;
+			default:
+				encoding = "";
+			}
+		}
 		std::wifstream ifs(file_path);
-		ifs.imbue(std::locale("zh_CN"));
+		ifs.imbue(std::locale(encoding));
 		if (ifs.is_open())
 		{
 			std::wstring line;
@@ -102,7 +122,7 @@ public:
 		}
 		else
 		{
-			throw "Open File Fail";
+			std::cerr << "Open File Fail";
 		}
 	}
 	DataBase<T> copy()
@@ -144,30 +164,30 @@ public:
 		std::wstring cmdA;
 		while (cmdin >> cmdA)
 		{
-			if (cmdA == L"—°‘Ò")
+			if (cmdA == L"ÈÄâÊã©")
 			{
 				std::wstring f, op, val;
 				cmdin >> f >> op >> val;
 				if (!cmdin.fail() && std::find(field.begin(), field.end(), f) != field.end())
 				{
-					if (op == L"µ»”⁄")res = res.where([=](const T& u) {return u[f] == val; });
-					else if (op == L"≤ªµ»”⁄")res = res.where([=](const T& u) {return u[f] != val; });
-					else if (op == L"∞¸∫¨")res = res.where([=](const T& u) {return u[f].find(val) != u[f].npos; });
-					else if (op == L"≤ª∞¸∫¨")res = res.where([=](const T& u) {return u[f].find(val) == u[f].npos; });
-					else if (op == L"¥Û”⁄")res = res.where([=](const T& u) {return u[f] > val; });
-					else if (op == L"–°”⁄")res = res.where([=](const T& u) {return u[f] < val; });
-					else if (op == L"≤ª¥Û”⁄")res = res.where([=](const T& u) {return u[f] <= val; });
-					else if (op == L"≤ª–°”⁄")res = res.where([=](const T& u) {return u[f] >= val; });
+					if (op == L"Á≠â‰∫é")res = res.where([=](const T& u) {return u[f] == val; });
+					else if (op == L"‰∏çÁ≠â‰∫é")res = res.where([=](const T& u) {return u[f] != val; });
+					else if (op == L"ÂåÖÂê´")res = res.where([=](const T& u) {return u[f].find(val) != u[f].npos; });
+					else if (op == L"‰∏çÂåÖÂê´")res = res.where([=](const T& u) {return u[f].find(val) == u[f].npos; });
+					else if (op == L"Â§ß‰∫é")res = res.where([=](const T& u) {return u[f] > val; });
+					else if (op == L"Â∞è‰∫é")res = res.where([=](const T& u) {return u[f] < val; });
+					else if (op == L"‰∏çÂ§ß‰∫é")res = res.where([=](const T& u) {return u[f] <= val; });
+					else if (op == L"‰∏çÂ∞è‰∫é")res = res.where([=](const T& u) {return u[f] >= val; });
 				}
 			}
-			else if (cmdA == L"∏˘æ›")
+			else if (cmdA == L"Ê†πÊçÆ")
 			{
 				std::wstring f, op;
 				cmdin >> f >> op;
 				if (!cmdin.fail() && std::find(field.begin(), field.end(), f) != field.end())
 				{
-					if (op == L"…˝–Ú")res.raw.sort([=](const T& u, const T& v) {return u[f] > v[f]; });
-					else if (op == L"Ωµ–Ú")res.raw.sort([=](const T& u, const T& v) {return u[f] < v[f]; });
+					if (op == L"ÂçáÂ∫è")res.raw.sort([=](const T& u, const T& v) {return u[f] > v[f]; });
+					else if (op == L"ÈôçÂ∫è")res.raw.sort([=](const T& u, const T& v) {return u[f] < v[f]; });
 				}
 			}
 		}

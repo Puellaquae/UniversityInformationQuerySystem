@@ -1,4 +1,5 @@
-#include <string>
+ï»¿#include <string>
+#include <algorithm>
 #include "Interact.hpp"
 #include "DataBase.hpp"
 #include "University.hpp"
@@ -10,71 +11,71 @@ int main()
 	using namespace Interact;
 	SetChineseEnvironment();
 	typedef Menu::Item item;
-	Welcome(L"¸ßĞ£ĞÅÏ¢²éÑ¯ÏµÍ³")();
+	Welcome(L"é«˜æ ¡ä¿¡æ¯æŸ¥è¯¢ç³»ç»Ÿ")();
 
-	Menu(L"¿ªÊ¼", {
-		item(1, L"ĞÅÏ¢²éÑ¯", [] {
-			Menu(L"ĞÅÏ¢²éÑ¯", {
-				item(1, L"ÏÔÊ¾ËùÓĞ¸ßĞ£ĞÅÏ¢",[] {[&] {
+	Menu(L"å¼€å§‹", {
+		item(1, L"ä¿¡æ¯æŸ¥è¯¢", [] {
+			Menu(L"ä¿¡æ¯æŸ¥è¯¢", {
+				item(1, L"æ˜¾ç¤ºæ‰€æœ‰é«˜æ ¡ä¿¡æ¯",[] {[&] {
 					Table<DataBase<University>>(dataBase.query(L""))();
 					}();
 				}),
-				item(2, L"Í¨¹ı¸ßĞ£[±àºÅ|Ãû³Æ|µØÖ·|Ê¡·İ|½¨Ğ£Ê±¼ä|ÍøÖ·]²éÑ¯",[] {
-					Input<std::wstring>(L"ÇëÊäÈëÒªÓÃÓÚ²éÕÒµÄÏîÄ¿",[&](const std::wstring& item) {
+				item(2, L"é€šè¿‡é«˜æ ¡[ç¼–å·|åç§°|åœ°å€|çœä»½|å»ºæ ¡æ—¶é—´|ç½‘å€]æŸ¥è¯¢",[] {
+					Input<std::wstring>(L"è¯·è¾“å…¥è¦ç”¨äºæŸ¥æ‰¾çš„é¡¹ç›®",[&](const std::wstring& item) {
 						if (std::find(University::field.begin(),University::field.end(),item) == University::field.end())
 						{
-							Output(L"´ËÏî²»´æÔÚ")();
+							Output(L"æ­¤é¡¹ä¸å­˜åœ¨")();
 							return;
 						}
-						Input<std::wstring>(L"ÇëÊäÈë²éÕÒµÄÖµ", [&](const std::wstring& val) {
-							Table<DataBase<University>>(dataBase.query(L"Ñ¡Ôñ " + item + L" °üº¬ " + val))();
+						Input<std::wstring>(L"è¯·è¾“å…¥æŸ¥æ‰¾çš„å€¼", [&](const std::wstring& val) {
+							Table<DataBase<University>>(dataBase.query(L"é€‰æ‹© " + item + L" åŒ…å« " + val))();
 						})();
 					})();
 				}),
-				item(3, L"¸ß¼¶²éÑ¯",[]() {
-					Output(L"²éÑ¯ÃüÁîËµÃ÷£¨²»ÒªÊ¡ÂÔ¿Õ¸ñ£©:\n\tÆ¥Åä:\"Ñ¡Ôñ ÏîÄ¿Ãû µÈÓÚ|²»µÈÓÚ|°üº¬|²»°üº¬|´óÓÚ|Ğ¡ÓÚ|²»Ğ¡ÓÚ|²»´óÓÚ Öµ\"\n\tÅÅĞò:\"¸ù¾İ ÏîÄ¿Ãû ÉıĞò|½µĞò\"")();
-					Input<std::wstring>(L"ÇëÊ¹ÓÃÃüÁî²éÑ¯",[&](const std::wstring cmd) {
+				item(3, L"é«˜çº§æŸ¥è¯¢",[]() {
+					Output(L"æŸ¥è¯¢å‘½ä»¤è¯´æ˜ï¼ˆä¸è¦çœç•¥ç©ºæ ¼ï¼‰:\n\tåŒ¹é…:\"é€‰æ‹© é¡¹ç›®å ç­‰äº|ä¸ç­‰äº|åŒ…å«|ä¸åŒ…å«|å¤§äº|å°äº|ä¸å°äº|ä¸å¤§äº å€¼\"\n\tæ’åº:\"æ ¹æ® é¡¹ç›®å å‡åº|é™åº\"")();
+					Input<std::wstring>(L"è¯·ä½¿ç”¨å‘½ä»¤æŸ¥è¯¢",[&](const std::wstring cmd) {
 						Table<DataBase<University>>(dataBase.query(cmd))();
 					})();
 				}),
-				item(4, L"·µ»ØÉÏ¼¶²Ëµ¥")
+				item(4, L"è¿”å›ä¸Šçº§èœå•")
 			})();
 		}),
-		item(2, L"ĞÅÏ¢Î¬»¤", [] {
-			Menu(L"ĞÅÏ¢Î¬»¤", {
-				item(1, L"É¾³ıĞÅÏ¢",[] {
-					Input<std::wstring>(L"ÇëÊäÈëÒªÉ¾³ıµÄ¸ßĞ£±àºÅ",[&](const std::wstring& index) {
+		item(2, L"ä¿¡æ¯ç»´æŠ¤", [] {
+			Menu(L"ä¿¡æ¯ç»´æŠ¤", {
+				item(1, L"åˆ é™¤ä¿¡æ¯",[] {
+					Input<std::wstring>(L"è¯·è¾“å…¥è¦åˆ é™¤çš„é«˜æ ¡ç¼–å·",[&](const std::wstring& index) {
 						const int res = dataBase.remove([&](const University& u) {return u.id == index; });
-						Output(L"¸üĞÂ¹²Ó°Ïì#ÌõĞÅÏ¢",res)();
+						Output(L"æ›´æ–°å…±å½±å“#æ¡ä¿¡æ¯",res)();
 					})();
 				}),
-				item(2, L"ĞŞ¸ÄĞÅÏ¢",[] {
-					Input<std::wstring>(L"ÇëÊäÈëÒªĞŞ¸ÄµÄ¸ßĞ£±àºÅ",[](const std::wstring& index) {
-						Input<std::wstring>(L"ÇëÊäÈëÒªĞŞ¸ÄµÄÏîÄ¿",[&](const std::wstring& item) {
+				item(2, L"ä¿®æ”¹ä¿¡æ¯",[] {
+					Input<std::wstring>(L"è¯·è¾“å…¥è¦ä¿®æ”¹çš„é«˜æ ¡ç¼–å·",[](const std::wstring& index) {
+						Input<std::wstring>(L"è¯·è¾“å…¥è¦ä¿®æ”¹çš„é¡¹ç›®",[&](const std::wstring& item) {
 							if (std::find(University::field.begin(),University::field.end(),item) == University::field.end())
 							{
-								Output(L"´ËÏî²»´æÔÚ")();
+								Output(L"æ­¤é¡¹ä¸å­˜åœ¨")();
 								return;
 							}
-							Input<std::wstring>(L"ÇëÊäÈëĞÂÖµ",[&](const std::wstring& newval) {
+							Input<std::wstring>(L"è¯·è¾“å…¥æ–°å€¼",[&](const std::wstring& newval) {
 								const int res = dataBase.update(item,newval,[&](const University& u) {
 									return u.id == index;
 								});
-								Output(L"¸üĞÂ¹²Ó°Ïì#ÌõĞÅÏ¢",res)();
+								Output(L"æ›´æ–°å…±å½±å“#æ¡ä¿¡æ¯",res)();
 							})();
 						})();
 					})();
 				}),
-				item(3, L"Ôö¼ÓĞÅÏ¢",[] {
+				item(3, L"å¢åŠ ä¿¡æ¯",[] {
 					Form<University>([&](const University& val) {
 						dataBase.insert(val);
-						Output(L"ĞÅÏ¢ÒÑÌí¼Ó")();
+						Output(L"ä¿¡æ¯å·²æ·»åŠ ")();
 					})();
 				}),
-				item(4, L"·µ»ØÉÏ¼¶²Ëµ¥")
+				item(4, L"è¿”å›ä¸Šçº§èœå•")
 			})();
 		}),
-		item(3, L"ÍË³öÏµÍ³")
+		item(3, L"é€€å‡ºç³»ç»Ÿ")
 		})();
 		return 0;
 }

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <functional>
 #include <iostream>
 #include <map>
@@ -7,9 +7,7 @@
 namespace Interact {
 	inline void SetChineseEnvironment()
 	{
-		std::wcout.imbue(std::locale("zh_CN"));
-		std::wcerr.imbue(std::locale("zh_CN"));
-		std::wcin.imbue(std::locale("zh_CN"));
+		std::locale::global(std::locale(""));
 	}
 
 	class Welcome
@@ -63,20 +61,20 @@ namespace Interact {
 			{
 				if (std::wcin.eof())
 				{
-					std::wcerr << L"´Ë²Ëµ¥µÄ½»»¥ÒÑÈ¡Ïû\n";
+					std::wcerr << L"æ­¤èœå•çš„äº¤äº’å·²å–æ¶ˆ\n";
 					std::wcin.clear();
 					break;
 				}
 				if (std::wcin.fail())
 				{
-					std::wcerr << L"ÇëÊäÈëÊý×ÖÐòºÅ\n";
+					std::wcerr << L"è¯·è¾“å…¥æ•°å­—åºå·\n";
 					std::wcin.clear();
 					std::wstring clearwcin;
 					std::getline(std::wcin, clearwcin);
 				}
 				else if (menu_items.find(cmd) == menu_items.end())
 				{
-					std::wcerr << L"²»´æÔÚ´ËÏî\n";
+					std::wcerr << L"ä¸å­˜åœ¨æ­¤é¡¹\n";
 				}
 				else
 				{
@@ -107,13 +105,13 @@ namespace Interact {
 			std::wcin >> in;
 			if (std::wcin.eof())
 			{
-				std::wcerr << L"±¾´ÎÊäÈëÒÑÈ¡Ïû\n";
+				std::wcerr << L"æœ¬æ¬¡è¾“å…¥å·²å–æ¶ˆ\n";
 				std::wcin.clear();
 				return;
 			}
 			if (std::wcin.fail())
 			{
-				std::wcerr << L"´íÎóµÄÊäÈë£¬±¾´ÎÊäÈëÒÑÖÕÖ¹\n";
+				std::wcerr << L"é”™è¯¯çš„è¾“å…¥ï¼Œæœ¬æ¬¡è¾“å…¥å·²ç»ˆæ­¢\n";
 				std::wcin.clear();
 				std::wstring clearwcin;
 				std::getline(std::wcin, clearwcin);
@@ -140,7 +138,7 @@ namespace Interact {
 			std::getline(std::wcin, in);
 			if (std::wcin.eof())
 			{
-				std::wcerr << L"±¾´ÎÊäÈëÒÑÈ¡Ïû\n";
+				std::wcerr << L"æœ¬æ¬¡è¾“å…¥å·²å–æ¶ˆ\n";
 				std::wcin.clear();
 				return;
 			}
@@ -163,13 +161,13 @@ namespace Interact {
 				std::wcin >> data[f];
 				if (std::wcin.eof())
 				{
-					std::wcerr << L"±¾´ÎÊäÈëÒÑÈ¡Ïû\n";
+					std::wcerr << L"æœ¬æ¬¡è¾“å…¥å·²å–æ¶ˆ\n";
 					std::wcin.clear();
 					return;
 				}
 				if (std::wcin.fail())
 				{
-					std::wcerr << L"´íÎóµÄÊäÈë£¬±¾´ÎÊäÈëÒÑ±»ÖÕÖ¹\n";
+					std::wcerr << L"é”™è¯¯çš„è¾“å…¥ï¼Œæœ¬æ¬¡è¾“å…¥å·²è¢«ç»ˆæ­¢\n";
 					std::wcin.clear();
 					std::wcin.get();
 					return;
@@ -209,7 +207,7 @@ namespace Interact {
 		void operator()() const
 		{
 			auto& field = decltype(*data.begin())::field;
-			std::wcout << L"--¹²µÃµ½" << data.size() << L"ÌõÐÅÏ¢--\n";
+			std::wcout << L"--å…±å¾—åˆ°" << data.size() << L"æ¡ä¿¡æ¯--\n";
 			for (auto it : data)
 			{
 				for (const auto& f : field)

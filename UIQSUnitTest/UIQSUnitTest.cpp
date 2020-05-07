@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "CppUnitTest.h"
 #include "../UIQS/LinkList.hpp"
 
@@ -13,18 +13,18 @@ namespace UIQSUnitTest {
 			LinkList<int> list1({ 1,2,3 });
 			LinkList<int> list2({ 3,2,1 });
 			Assert::IsFalse(list1 == list2);
-			//×Ô·´ĞÔ
+			//è‡ªåæ€§
 			LinkList<int> listA({ 1,2,3 });
 			Assert::IsTrue(listA == listA);
-			//¶Ô³ÆĞÔ
+			//å¯¹ç§°æ€§
 			const LinkList<int> listB = listA;
 			Assert::IsTrue(listA == listB);
 			Assert::IsTrue(listB == listA);
-			//´«µİĞÔ
+			//ä¼ é€’æ€§
 			const LinkList<int> listC = { 1,2,3 };
 			Assert::IsTrue(listB == listC);
 			Assert::IsTrue(listA == listC);
-			//Ç¿ÀàĞÍ
+			//å¼ºç±»å‹
 			const LinkList<long> listLA({ 1,2,3 });
 			Assert::IsFalse(listA == listLA);
 			const LinkList<double> listDA({ 1.0,2.0,3.0 });
