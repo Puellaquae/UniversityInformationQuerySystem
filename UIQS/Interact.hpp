@@ -8,6 +8,7 @@ namespace Interact {
 	inline void SetChineseEnvironment()
 	{
 		std::wcout.imbue(std::locale("zh_CN"));
+		std::wcerr.imbue(std::locale("zh_CN"));
 		std::wcin.imbue(std::locale("zh_CN"));
 	}
 
@@ -62,19 +63,20 @@ namespace Interact {
 			{
 				if (std::wcin.eof())
 				{
-					std::wcout << L"此菜单的交互已取消\n";
+					std::wcerr << L"此菜单的交互已取消\n";
 					std::wcin.clear();
 					break;
 				}
 				if (std::wcin.fail())
 				{
-					std::wcout << L"请输入数字序号\n";
+					std::wcerr << L"请输入数字序号\n";
 					std::wcin.clear();
-					std::wcin.get();
+					std::wstring clearwcin;
+					std::getline(std::wcin, clearwcin);
 				}
 				else if (menu_items.find(cmd) == menu_items.end())
 				{
-					std::wcout << L"不存在此项\n";
+					std::wcerr << L"不存在此项\n";
 				}
 				else
 				{
@@ -105,15 +107,16 @@ namespace Interact {
 			std::wcin >> in;
 			if (std::wcin.eof())
 			{
-				std::wcout << L"本次输入已取消\n";
+				std::wcerr << L"本次输入已取消\n";
 				std::wcin.clear();
 				return;
 			}
 			if (std::wcin.fail())
 			{
-				std::wcout << L"错误的输入，本次输入已终止\n";
+				std::wcerr << L"错误的输入，本次输入已终止\n";
 				std::wcin.clear();
-				std::wcin.get();
+				std::wstring clearwcin;
+				std::getline(std::wcin, clearwcin);
 				return;
 			}
 			input_callback(in);
@@ -137,7 +140,7 @@ namespace Interact {
 			std::getline(std::wcin, in);
 			if (std::wcin.eof())
 			{
-				std::wcout << L"本次输入已取消\n";
+				std::wcerr << L"本次输入已取消\n";
 				std::wcin.clear();
 				return;
 			}
@@ -160,13 +163,13 @@ namespace Interact {
 				std::wcin >> data[f];
 				if (std::wcin.eof())
 				{
-					std::wcout << L"本次输入已取消\n";
+					std::wcerr << L"本次输入已取消\n";
 					std::wcin.clear();
 					return;
 				}
 				if (std::wcin.fail())
 				{
-					std::wcout << L"错误的输入，本次输入已被终止\n";
+					std::wcerr << L"错误的输入，本次输入已被终止\n";
 					std::wcin.clear();
 					std::wcin.get();
 					return;

@@ -11,6 +11,10 @@ class DataBase
 	LinkList<T> raw{};
 	explicit DataBase(LinkList<T> list) :raw(std::move(list)) {}
 public:
+	enum EXEC_RETURN
+	{
+
+	};
 	void save()
 	{
 		if (file_path.empty())return;
@@ -66,7 +70,7 @@ public:
 	DataBase(const DataBase<T>& db) :DataBase(db.raw) {}
 	DataBase(DataBase&& db) noexcept
 	{
-		raw = db.raw;
+		raw = std::move(db.raw);
 	}
 	DataBase<T>& operator=(const DataBase<T>& db)
 	{
@@ -144,17 +148,23 @@ public:
 			{
 				std::wstring f, op, val;
 				cmdin >> f >> op >> val;
-				if (std::find(field.begin(), field.end(), f) != field.end())
+				if (!cmdin.fail() && std::find(field.begin(), field.end(), f) != field.end())
 				{
 					if (op == L"等于")res = res.where([=](const T& u) {return u[f] == val; });
+					else if (op == L"不等于")res = res.where([=](const T& u) {return u[f] != val; });
 					else if (op == L"包含")res = res.where([=](const T& u) {return u[f].find(val) != u[f].npos; });
+					else if (op == L"不包含")res = res.where([=](const T& u) {return u[f].find(val) == u[f].npos; });
+					else if (op == L"大于")res = res.where([=](const T& u) {return u[f] > val; });
+					else if (op == L"小于")res = res.where([=](const T& u) {return u[f] < val; });
+					else if (op == L"不大于")res = res.where([=](const T& u) {return u[f] <= val; });
+					else if (op == L"不小于")res = res.where([=](const T& u) {return u[f] >= val; });
 				}
 			}
 			else if (cmdA == L"根据")
 			{
 				std::wstring f, op;
 				cmdin >> f >> op;
-				if (std::find(field.begin(), field.end(), f) != field.end())
+				if (!cmdin.fail() && std::find(field.begin(), field.end(), f) != field.end())
 				{
 					if (op == L"升序")res.raw.sort([=](const T& u, const T& v) {return u[f] > v[f]; });
 					else if (op == L"降序")res.raw.sort([=](const T& u, const T& v) {return u[f] < v[f]; });

@@ -1,0 +1,26 @@
+{
+    "UIQS": [
+        {
+            "type": "Welcome",
+            "title": "高校信息查询系统"
+        },
+        {
+            "type": "Menu",
+            "title": "开始",
+            "item": [
+                {
+                    "title": "显示高校所有信息",
+                    "action": [
+                        {
+                            "query": "*"
+                        }
+                    ]
+                },
+                {
+                    "title": "通过特定项查询",
+                    "action": []
+                }
+            ]
+        }
+    ]
+}

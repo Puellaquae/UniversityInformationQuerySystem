@@ -16,7 +16,7 @@ int main()
 		item(1, L"信息查询", [] {
 			Menu(L"信息查询", {
 				item(1, L"显示所有高校信息",[] {[&] {
-					Table<DataBase<University>>(dataBase.copy())();
+					Table<DataBase<University>>(dataBase.query(L""))();
 					}();
 				}),
 				item(2, L"通过高校[编号|名称|地址|省份|建校时间|网址]查询",[] {
@@ -27,14 +27,12 @@ int main()
 							return;
 						}
 						Input<std::wstring>(L"请输入查找的值", [&](const std::wstring& val) {
-							Table<DataBase<University>>(dataBase.where([&](const University& x) {
-								return x[item].find(val) != x[item].npos;
-							}))();
+							Table<DataBase<University>>(dataBase.query(L"选择 " + item + L" 包含 " + val))();
 						})();
 					})();
 				}),
 				item(3, L"高级查询",[]() {
-					Output(L"查询命令说明（不要省略空格）:\n\t准确匹配:\"选择 项目名 等于 值\"\t 模糊匹配:\"选择 项目名 包含 值\"\n\t排序:\"根据 项目名 升序\"\t\"根据 项目名 降序\"")();
+					Output(L"查询命令说明（不要省略空格）:\n\t匹配:\"选择 项目名 等于|不等于|包含|不包含|大于|小于|不小于|不大于 值\"\n\t排序:\"根据 项目名 升序|降序\"")();
 					Input<std::wstring>(L"请使用命令查询",[&](const std::wstring cmd) {
 						Table<DataBase<University>>(dataBase.query(cmd))();
 					})();
