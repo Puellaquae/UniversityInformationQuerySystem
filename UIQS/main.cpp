@@ -4,7 +4,7 @@
 #include "DataBase.hpp"
 #include "University.hpp"
 
-DataBase<University> dataBase = DataBase<University>(L"data.txt");
+DataBase<University> dataBase = DataBase<University>("data.txt");
 
 int main()
 {
@@ -34,7 +34,7 @@ int main()
 				}),
 				item(3, L"高级查询",[]() {
 					Output(L"查询命令说明（不要省略空格）:\n\t匹配:\"选择 项目名 等于|不等于|包含|不包含|大于|小于|不小于|不大于 值\"\n\t排序:\"根据 项目名 升序|降序\"")();
-					Input<std::wstring>(L"请使用命令查询",[&](const std::wstring cmd) {
+					Input<std::wstring>(L"请使用命令查询",[&](const std::wstring& cmd) {
 						Table<DataBase<University>>(dataBase.query(cmd))();
 					})();
 				}),

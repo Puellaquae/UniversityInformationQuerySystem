@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileIO.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataBase.hpp" />
+    <ClInclude Include="FileIO.hpp" />
     <ClInclude Include="LinkList.hpp" />
     <ClInclude Include="Interact.hpp" />
     <ClInclude Include="University.hpp" />

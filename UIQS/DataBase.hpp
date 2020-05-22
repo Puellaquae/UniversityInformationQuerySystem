@@ -3,20 +3,37 @@
 #include <fstream>
 #include <sstream>
 #include "LinkList.hpp"
+#include "FileIO.hpp"
 
 template<typename T>
 class DataBase
 {
 	decltype(T::field)& field = T::field;
-	const std::wstring file_path;
+	const std::string file_path;
+
 	LinkList<T> raw{};
 	explicit DataBase(LinkList<T> list) :raw(std::move(list)) {}
+	void load()
+	{
+		std::wifstream ifs = FileIO::file_auto_encoding_open(file_path);
+		if (ifs.is_open() && !ifs.bad())
+		{
+			std::wstring line;
+			while (std::getline(ifs, line))
+			{
+				raw.push_back(T(line));
+			}
+		}
+		else
+		{
+			std::cerr << "Open File Fail";
+		}
+	}
 public:
 	void save()
 	{
 		if (file_path.empty())return;
 		std::wofstream ofs(file_path, std::ios::out | std::ios::trunc);
-		ofs.imbue(std::locale(ofs.getloc()));
 		if (ofs.is_open())
 		{
 			for (const auto& it : raw)
@@ -25,10 +42,11 @@ public:
 			}
 		}
 	}
-	void save(const std::wstring& saveFilePath)
+
+	void save(const std::string& saveFilePath)
 	{
+		if (saveFilePath.empty())return;
 		std::wofstream ofs(saveFilePath, std::ios::out | std::ios::trunc);
-		//ofs.imbue(std::locale("zh_CN.UTF8"));
 		if (ofs.is_open())
 		{
 			for (const auto& it : raw)
@@ -37,6 +55,7 @@ public:
 			}
 		}
 	}
+
 	~DataBase()
 	{
 		save();
@@ -71,7 +90,7 @@ public:
 	}
 	DataBase<T>& operator=(const DataBase<T>& db)
 	{
-		if (&db != this)
+		if (this != &db)
 		{
 			raw = db.raw;
 		}
@@ -85,45 +104,10 @@ public:
 		}
 		return *this;
 	}
-	explicit DataBase(std::wstring filepath) :file_path(std::move(filepath))
+
+	explicit  DataBase(std::string filepath) :file_path(std::move(filepath))
 	{
-		std::string encoding;
-		{
-			std::ifstream encodingTest(file_path, std::ios::binary);
-			unsigned char byte;
-			encodingTest.read(reinterpret_cast<char*>(&byte), sizeof(byte));
-			int bom = byte << 8;
-			encodingTest.read(reinterpret_cast<char*>(&byte), sizeof(byte));
-			bom |= byte;
-			switch (bom)
-			{
-			case 0xfffe:  //65534
-				encoding = ".UTF16LE";
-				break;
-			case 0xfeff://65279
-				encoding = ".UTF16BE";
-				break;
-			case 0xefbb://61371
-				encoding = ".UTF8";
-				break;
-			default:
-				encoding = "";
-			}
-		}
-		std::wifstream ifs(file_path);
-		ifs.imbue(std::locale(encoding));
-		if (ifs.is_open())
-		{
-			std::wstring line;
-			while (std::getline(ifs, line))
-			{
-				raw.push_back(T(line));
-			}
-		}
-		else
-		{
-			std::cerr << "Open File Fail";
-		}
+		load();
 	}
 	DataBase<T> copy()
 	{

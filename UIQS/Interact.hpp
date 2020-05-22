@@ -88,14 +88,14 @@ namespace Interact {
 			}
 		}
 	};
-	template<typename T>
-	class Input
+	template<typename T> class Input
 	{
 		std::wstring input_placeholder;
 		std::function<void(T)> input_callback;
+		std::function<bool(T)> input_validator;
 	public:
-		Input(std::wstring placeholder, std::function<void(T)> callback) : input_placeholder(std::move(placeholder)),
-			input_callback(std::move(callback))
+		Input(std::wstring placeholder, std::function<void(T)> callback, std::function<bool(T)> validator = nullptr) : input_placeholder(std::move(placeholder)),
+			input_callback(std::move(callback)), input_validator(std::move(validator))
 		{}
 
 		void operator()()
@@ -117,17 +117,22 @@ namespace Interact {
 				std::getline(std::wcin, clearwcin);
 				return;
 			}
+			if (input_validator != nullptr && !input_validator(in))
+			{
+				std::wcerr << L"被拒绝的输入，本次输入已终止\n";
+				return;
+			}
 			input_callback(in);
 		}
 	};
-	template<>
-	class Input<std::wstring>
+	template<> class Input<std::wstring>
 	{
 		std::wstring input_placeholder;
 		std::function<void(std::wstring)> input_callback;
+		std::function<bool(std::wstring)> input_validator;
 	public:
-		Input(std::wstring placeholder, std::function<void(std::wstring)> callback) : input_placeholder(std::move(placeholder)),
-			input_callback(std::move(callback))
+		Input(std::wstring placeholder, std::function<void(std::wstring)> callback, std::function<bool(std::wstring)> validator = nullptr) : input_placeholder(std::move(placeholder)),
+			input_callback(std::move(callback)), input_validator(std::move(validator))
 		{}
 
 		void operator()() const
@@ -145,8 +150,32 @@ namespace Interact {
 			input_callback(in);
 		}
 	};
-	template<typename T>
-	class Form
+	template<> class Input<std::string>
+	{
+		std::string input_placeholder;
+		std::function<void(std::string)> input_callback;
+		std::function<bool(std::string)> input_validator;
+	public:
+		Input(std::string placeholder, std::function<void(std::string)> callback, std::function<bool(std::string)> validator = nullptr) : input_placeholder(std::move(placeholder)),
+			input_callback(std::move(callback)), input_validator(std::move(validator))
+		{}
+
+		void operator()() const
+		{
+			std::cout << input_placeholder << ":\n";
+			std::string in;
+			while (std::cin.peek() == '\n')std::cin.get();
+			std::getline(std::cin, in);
+			if (std::cin.eof())
+			{
+				std::cerr << L"本次输入已取消\n";
+				std::cin.clear();
+				return;
+			}
+			input_callback(in);
+		}
+	};
+	template<typename T> class Form
 	{
 		decltype(T::field)& field = T::field;
 		T data = T();
@@ -185,10 +214,10 @@ namespace Interact {
 		{
 			const auto x = msg.find_first_of('#');
 			msg = msg.substr(0, x) + std::to_wstring(arg) + msg.substr(x + 1);
-			Output(msg, args);
+			Output(msg, args...);
 		}
 		template<typename T>
-		explicit Output(const std::wstring msg, T arg)
+		explicit Output(const std::wstring& msg, T arg)
 		{
 			const auto x = msg.find_first_of('#');
 			out = msg.substr(0, x) + std::to_wstring(arg) + msg.substr(x + 1);
@@ -206,7 +235,7 @@ namespace Interact {
 		explicit Table(const T& data_) :data(data_) {}
 		void operator()() const
 		{
-			auto& field = decltype(*data.begin())::field;
+			auto& field = (*data.begin()).field;
 			std::wcout << L"--共得到" << data.size() << L"条信息--\n";
 			for (auto it : data)
 			{
