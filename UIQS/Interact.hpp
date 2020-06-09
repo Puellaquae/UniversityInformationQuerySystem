@@ -10,6 +10,14 @@ namespace Interact {
 		std::locale::global(std::locale(""));
 	}
 
+	const std::wstring winput_cancel = L"本次输入已取消";
+	const std::wstring winput_wrong_type_abort = L"错误的输入，本次输入已终止";
+	const std::wstring winput_invaild_abort = L"被拒绝的输入值，本次输入已终止";
+
+	const std::string input_cancel = "本次输入已取消";
+	const std::string input_wrong_type_abort = "错误的输入，本次输入已终止";
+	const std::string input_invaild_abort = "被拒绝的输入值，本次输入已终止";
+
 	class Welcome
 	{
 		std::wstring welcome_title;
@@ -105,13 +113,13 @@ namespace Interact {
 			std::wcin >> in;
 			if (std::wcin.eof())
 			{
-				std::wcerr << L"本次输入已取消\n";
+				std::wcerr << winput_cancel << std::endl;
 				std::wcin.clear();
 				return;
 			}
 			if (std::wcin.fail())
 			{
-				std::wcerr << L"错误的输入，本次输入已终止\n";
+				std::wcerr << winput_wrong_type_abort << std::endl;
 				std::wcin.clear();
 				std::wstring clearwcin;
 				std::getline(std::wcin, clearwcin);
@@ -119,7 +127,7 @@ namespace Interact {
 			}
 			if (input_validator != nullptr && !input_validator(in))
 			{
-				std::wcerr << L"被拒绝的输入，本次输入已终止\n";
+				std::wcerr << winput_invaild_abort << std::endl;
 				return;
 			}
 			input_callback(in);
@@ -143,8 +151,13 @@ namespace Interact {
 			std::getline(std::wcin, in);
 			if (std::wcin.eof())
 			{
-				std::wcerr << L"本次输入已取消\n";
+				std::wcerr << winput_cancel << std::endl;
 				std::wcin.clear();
+				return;
+			}
+			if (input_validator != nullptr && !input_validator(in))
+			{
+				std::wcerr << winput_invaild_abort << std::endl;
 				return;
 			}
 			input_callback(in);
@@ -168,8 +181,13 @@ namespace Interact {
 			std::getline(std::cin, in);
 			if (std::cin.eof())
 			{
-				std::cerr << L"本次输入已取消\n";
+				std::cerr << input_cancel << std::endl;
 				std::cin.clear();
+				return;
+			}
+			if (input_validator != nullptr && !input_validator(in))
+			{
+				std::cerr << input_invaild_abort << std::endl;
 				return;
 			}
 			input_callback(in);
