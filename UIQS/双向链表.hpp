@@ -3,7 +3,7 @@
 #include <vector>
 #include <functional>
 template<typename T>
-class LinkList
+class 双向链表
 {
 	struct Node
 	{
@@ -20,19 +20,19 @@ class LinkList
 	Node* head;
 	int _size = 0;
 public:
-	LinkList()
+	双向链表()
 	{
 		void_node.prev = void_node.next = &void_node;
 		head = &void_node;
 	}
-	LinkList(const LinkList& list) :LinkList()
+	双向链表(const 双向链表& list) :双向链表()
 	{
 		for (auto it = list.begin(); it != list.end(); ++it)
 		{
 			push_back(*it);
 		}
 	}
-	LinkList(LinkList&& list) noexcept :head(list.head), _size(list._size)
+	双向链表(双向链表&& list) noexcept :head(list.head), _size(list._size)
 	{
 		void_node.next = &void_node;
 		head->prev = &void_node;
@@ -41,14 +41,14 @@ public:
 		list.head = &list.void_node;
 		list.void_node.prev = &list.void_node;
 	}
-	LinkList(std::initializer_list<T> list) :LinkList()
+	双向链表(std::initializer_list<T> list) :双向链表()
 	{
 		for (auto x : list)
 		{
 			push_back(x);
 		}
 	}
-	LinkList& operator=(const LinkList& list)
+	双向链表& operator=(const 双向链表& list)
 	{
 		if (this == &list) { return *this; }
 		int pos = 0;
@@ -64,7 +64,7 @@ public:
 		}
 		return *this;
 	}
-	LinkList& operator=(LinkList&& list) noexcept
+	双向链表& operator=(双向链表&& list) noexcept
 	{
 		if (this == &list) { return *this; }
 		Node* pnode = void_node.prev;
@@ -84,7 +84,7 @@ public:
 		list.void_node.prev = &list.void_node;
 		return *this;
 	}
-	~LinkList()
+	~双向链表()
 	{
 		Node* pnode = void_node.prev;
 		while (pnode != &void_node)
@@ -133,7 +133,7 @@ public:
 		{
 			return it.node != node;
 		}
-		friend class LinkList;
+		friend class 双向链表;
 	};
 	class ConstItor
 	{
@@ -345,7 +345,7 @@ public:
 			swap(maxi, i);
 		}
 	}
-	template<typename Tb>bool operator==(const LinkList<Tb> list) const
+	template<typename Tb>bool operator==(const 双向链表<Tb> list) const
 	{
 		if (std::is_same<Tb, T>::value)
 		{

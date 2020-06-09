@@ -15,27 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="文件交互.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="FileIO.cpp">
+    <ClCompile Include="主程序.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Interact.hpp">
+    <ClInclude Include="交互.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DataBase.hpp">
+    <ClInclude Include="大学信息.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="LinkList.hpp">
+    <ClInclude Include="文件交互.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="University.hpp">
+    <ClInclude Include="双向链表.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="FileIO.hpp">
+    <ClInclude Include="数据库.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

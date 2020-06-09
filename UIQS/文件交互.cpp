@@ -1,11 +1,11 @@
-#include "FileIO.hpp"
+#include "文件交互.hpp"
 
-namespace FileIO {
-	std::wifstream file_auto_encoding_open(const std::string& filePath)
+namespace 文件交互 {
+	std::wifstream 文件格式自动判断并打开(const std::string& 文件路径)
 	{
 		std::string encoding;
 		{
-			std::ifstream encodingTest(filePath, std::ios::binary);
+			std::ifstream encodingTest(文件路径, std::ios::binary);
 			unsigned char byte;
 			encodingTest.read(reinterpret_cast<char*>(&byte), sizeof(byte));
 			int bom = byte << 8;
@@ -26,7 +26,7 @@ namespace FileIO {
 				encoding = "";
 			}
 		}
-		std::wifstream ifs(filePath);
+		std::wifstream ifs(文件路径);
 		ifs.imbue(std::locale(encoding));
 		return ifs;
 	}
