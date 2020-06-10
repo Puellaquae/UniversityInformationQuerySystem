@@ -22,7 +22,7 @@ int main()
 				}),
 				item(2, L"通过高校[编号|名称|地址|省份|建校时间|网址]查询",[] {
 					Input<std::wstring>(L"请输入要用于查找的项目",[&](const std::wstring& item) {
-						if (std::find(University::field.begin(),University::field.end(),item) == University::field.end())
+						if (!University::contain(item))
 						{
 							Output(L"此项不存在")();
 							return;
@@ -52,7 +52,7 @@ int main()
 				item(2, L"修改信息",[] {
 					Input<std::wstring>(L"请输入要修改的高校编号",[](const std::wstring& index) {
 						Input<std::wstring>(L"请输入要修改的项目",[&](const std::wstring& item) {
-							if (std::find(University::field.begin(),University::field.end(),item) == University::field.end())
+							if (!University::contain(item))
 							{
 								Output(L"此项不存在")();
 								return;
@@ -76,6 +76,6 @@ int main()
 			})();
 		}),
 		item(3, L"退出系统")
-		})();
-		return 0;
+	})();
+	return 0;
 }

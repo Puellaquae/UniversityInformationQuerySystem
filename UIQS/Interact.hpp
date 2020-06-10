@@ -13,6 +13,7 @@ namespace Interact {
 	const std::wstring winput_cancel = L"本次输入已取消";
 	const std::wstring winput_wrong_type_abort = L"错误的输入，本次输入已终止";
 	const std::wstring winput_invaild_abort = L"被拒绝的输入值，本次输入已终止";
+	const std::wstring winput_invaild_retry = L"被拒绝的输入值，请重新输入";
 
 	const std::string input_cancel = "本次输入已取消";
 	const std::string input_wrong_type_abort = "错误的输入，本次输入已终止";
@@ -196,29 +197,43 @@ namespace Interact {
 	template<typename T> class Form
 	{
 		decltype(T::field)& field = T::field;
+		decltype(T::validators)& validators = T::validators;
 		T data = T();
 		std::function<void(const T&)> callback;
 	public:
 		explicit Form(std::function<void(T)> callback_) :callback(callback_) {}
 		void operator()()
 		{
+			std::wstring in;
+			std::function<bool(std::wstring)> validator = nullptr;
 			for (auto& f : field)
 			{
-				std::wcout << f << ": ";
-				std::wcin >> data[f];
-				if (std::wcin.eof())
+				bool valPass = true;
+				do
 				{
-					std::wcerr << L"本次输入已取消\n";
-					std::wcin.clear();
-					return;
-				}
-				if (std::wcin.fail())
-				{
-					std::wcerr << L"错误的输入，本次输入已被终止\n";
-					std::wcin.clear();
-					std::wcin.get();
-					return;
-				}
+					std::wcout << f << ": ";
+					std::wcin >> in;
+					if (std::wcin.eof())
+					{
+						std::wcerr << winput_cancel << std::endl;
+						std::wcin.clear();
+						return;
+					}
+					if (std::wcin.fail())
+					{
+						std::wcerr << winput_wrong_type_abort << std::endl;
+						std::wcin.clear();
+						std::wcin.get();
+						return;
+					}
+					validator = validators.at(f);
+					valPass = validator == nullptr ? true : validator(in);
+					if (!valPass)
+					{
+						std::wcerr << winput_invaild_retry << std::endl;
+					}
+				} while (!valPass);
+				data[f] = in;
 			}
 			callback(data);
 		}

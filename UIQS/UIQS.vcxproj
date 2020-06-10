@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="FileIO.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Validators.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataBase.hpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="LinkList.hpp" />
     <ClInclude Include="Interact.hpp" />
     <ClInclude Include="University.hpp" />
+    <ClInclude Include="Validators.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="data.txt">
