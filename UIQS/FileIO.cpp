@@ -1,6 +1,7 @@
 #include "FileIO.hpp"
 
-namespace FileIO {
+namespace FileIO
+{
 	std::wifstream file_auto_encoding_open(const std::string& filePath)
 	{
 		std::string encoding;
@@ -13,13 +14,13 @@ namespace FileIO {
 			bom |= byte;
 			switch (bom)
 			{
-			case 0xfffe:  //65534
+			case 0xfffe: //65534
 				encoding = ".UTF16LE";
 				break;
-			case 0xfeff://65279
+			case 0xfeff: //65279
 				encoding = ".UTF16BE";
 				break;
-			case 0xefbb://61371
+			case 0xefbb: //61371
 				encoding = ".UTF8";
 				break;
 			default:

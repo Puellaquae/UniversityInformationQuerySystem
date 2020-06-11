@@ -4,7 +4,8 @@
 #include <map>
 #include <utility>
 
-namespace Interact {
+namespace Interact
+{
 	inline void SetChineseEnvironment()
 	{
 		std::locale::global(std::locale(""));
@@ -23,14 +24,19 @@ namespace Interact {
 	{
 		std::wstring welcome_title;
 	public:
-		explicit Welcome(std::wstring welcomeTitle) :welcome_title(std::move(welcomeTitle)) {}
+		explicit Welcome(std::wstring welcomeTitle) : welcome_title(std::move(welcomeTitle))
+		{
+		}
+
 		void operator()() const
 		{
 			std::wcout << "  +" << std::wstring(welcome_title.size() * 4, '-') << "+\n"
-				<< "  |" << std::wstring(welcome_title.size(), ' ') << welcome_title << std::wstring(welcome_title.size(), ' ') << "|\n"
+				<< "  |" << std::wstring(welcome_title.size(), ' ') << welcome_title << std::wstring(
+					welcome_title.size(), ' ') << "|\n"
 				<< "  +" << std::wstring(welcome_title.size() * 4, '-') << "+\n";
 		}
 	};
+
 	class Menu
 	{
 	public:
@@ -39,13 +45,24 @@ namespace Interact {
 			int item_id{};
 			std::wstring item_name;
 			std::function<void()> item_procdure = nullptr;
-			Item(const int itmeId, std::wstring itemName, void(*procdure)()) :item_id(itmeId), item_name(std::move(itemName)), item_procdure(procdure) {}
-			Item(const int itemId, std::wstring itemName) :item_id(itemId), item_name(std::move(itemName)) {}
+
+			Item(const int itmeId, std::wstring itemName, void (*procdure)()) : item_id(itmeId),
+			                                                                    item_name(std::move(itemName)),
+			                                                                    item_procdure(procdure)
+			{
+			}
+
+			Item(const int itemId, std::wstring itemName) : item_id(itemId), item_name(std::move(itemName))
+			{
+			}
+
 			Item() = default;
 		};
+
 	private:
 		std::wstring menu_title;
 		std::map<int, Item> menu_items;
+
 		void show()
 		{
 			std::wcout << "  " << std::wstring(7, '-') << menu_title << std::wstring(7, '-') << std::endl;
@@ -54,14 +71,16 @@ namespace Interact {
 				std::wcout << item.first << "." << item.second.item_name << std::endl;
 			}
 		}
+
 	public:
-		Menu(std::wstring menuTitle, std::initializer_list<Item> menuItems) :menu_title(std::move(menuTitle))
+		Menu(std::wstring menuTitle, std::initializer_list<Item> menuItems) : menu_title(std::move(menuTitle))
 		{
 			for (const auto& item : menuItems)
 			{
 				menu_items[item.item_id] = item;
 			}
 		}
+
 		void operator()()
 		{
 			show();
@@ -97,15 +116,19 @@ namespace Interact {
 			}
 		}
 	};
-	template<typename T> class Input
+
+	template <typename T>
+	class Input
 	{
 		std::wstring input_placeholder;
 		std::function<void(T)> input_callback;
 		std::function<bool(T)> input_validator;
 	public:
-		Input(std::wstring placeholder, std::function<void(T)> callback, std::function<bool(T)> validator = nullptr) : input_placeholder(std::move(placeholder)),
+		Input(std::wstring placeholder, std::function<void(T)> callback, std::function<bool(T)> validator = nullptr) :
+			input_placeholder(std::move(placeholder)),
 			input_callback(std::move(callback)), input_validator(std::move(validator))
-		{}
+		{
+		}
 
 		void operator()()
 		{
@@ -134,15 +157,20 @@ namespace Interact {
 			input_callback(in);
 		}
 	};
-	template<> class Input<std::wstring>
+
+	template <>
+	class Input<std::wstring>
 	{
 		std::wstring input_placeholder;
 		std::function<void(std::wstring)> input_callback;
 		std::function<bool(std::wstring)> input_validator;
 	public:
-		Input(std::wstring placeholder, std::function<void(std::wstring)> callback, std::function<bool(std::wstring)> validator = nullptr) : input_placeholder(std::move(placeholder)),
-			input_callback(std::move(callback)), input_validator(std::move(validator))
-		{}
+		Input(std::wstring placeholder, std::function<void(std::wstring)> callback,
+		      std::function<bool(std::wstring)> validator = nullptr) : input_placeholder(std::move(placeholder)),
+		                                                               input_callback(std::move(callback)),
+		                                                               input_validator(std::move(validator))
+		{
+		}
 
 		void operator()() const
 		{
@@ -164,15 +192,20 @@ namespace Interact {
 			input_callback(in);
 		}
 	};
-	template<> class Input<std::string>
+
+	template <>
+	class Input<std::string>
 	{
 		std::string input_placeholder;
 		std::function<void(std::string)> input_callback;
 		std::function<bool(std::string)> input_validator;
 	public:
-		Input(std::string placeholder, std::function<void(std::string)> callback, std::function<bool(std::string)> validator = nullptr) : input_placeholder(std::move(placeholder)),
-			input_callback(std::move(callback)), input_validator(std::move(validator))
-		{}
+		Input(std::string placeholder, std::function<void(std::string)> callback,
+		      std::function<bool(std::string)> validator = nullptr) : input_placeholder(std::move(placeholder)),
+		                                                              input_callback(std::move(callback)),
+		                                                              input_validator(std::move(validator))
+		{
+		}
 
 		void operator()() const
 		{
@@ -195,25 +228,30 @@ namespace Interact {
 		}
 	};
 
-	template<typename T>
+	template <typename T>
 	struct HasMemberValidatorsQ
 	{
-		template <typename _T>static auto check(_T)->typename std::decay<decltype(_T::validators)>::type;
+		template <typename _T>
+		static auto check(_T) -> typename std::decay<decltype(_T::validators)>::type;
 		static void check(...);
 		using type = decltype(check(std::declval<T>()));
+
 		enum { value = !std::is_void<type>::value };
 	};
 
-	template<typename T>
+	template <typename T>
 	struct HasMemberValidateFailMsgQ
 	{
-		template <typename _T>static auto check(_T)->typename std::decay<decltype(_T::validate_fail_msg)>::type;
+		template <typename _T>
+		static auto check(_T) -> typename std::decay<decltype(_T::validate_fail_msg)>::type;
 		static void check(...);
 		using type = decltype(check(std::declval<T>()));
+
 		enum { value = !std::is_void<type>::value };
 	};
 
-	template<typename T, bool ValidQ, bool MsgQ> class FormImpl
+	template <typename T, bool ValidQ, bool MsgQ>
+	class FormImpl
 	{
 	public:
 		void operator()(std::function<void(const T&)> callback)
@@ -226,7 +264,7 @@ namespace Interact {
 			std::function<bool(std::wstring)> validator = nullptr;
 			for (auto& f : field)
 			{
-				bool valPass = true;
+				bool valPass;
 				do
 				{
 					std::wcout << f << ": ";
@@ -248,16 +286,19 @@ namespace Interact {
 					valPass = validator == nullptr ? true : validator(in);
 					if (!valPass)
 					{
-						std::wcerr << invalidMsg.at(f) << std::endl;
+						std::wstring validFailMsg = invalidMsg.at(f);
+						std::wcerr << (validFailMsg.empty() ? winput_invaild_retry : validFailMsg) << std::endl;
 					}
-				} while (!valPass);
+				}
+				while (!valPass);
 				data[f] = in;
 			}
 			callback(data);
 		}
 	};
 
-	template<typename T, bool ValidQ> class FormImpl<T, ValidQ, false>
+	template <typename T, bool ValidQ>
+	class FormImpl<T, ValidQ, false>
 	{
 	public:
 		void operator()(std::function<void(const T&)> callback)
@@ -269,7 +310,7 @@ namespace Interact {
 			std::function<bool(std::wstring)> validator = nullptr;
 			for (auto& f : field)
 			{
-				bool valPass = true;
+				bool valPass;
 				do
 				{
 					std::wcout << f << ": ";
@@ -293,14 +334,16 @@ namespace Interact {
 					{
 						std::wcerr << winput_invaild_retry << std::endl;
 					}
-				} while (!valPass);
+				}
+				while (!valPass);
 				data[f] = in;
 			}
 			callback(data);
 		}
 	};
 
-	template<typename T> class FormImpl<T, false, false>
+	template <typename T>
+	class FormImpl<T, false, false>
 	{
 	public:
 		void operator()(std::function<void(const T&)> callback)
@@ -329,46 +372,61 @@ namespace Interact {
 		}
 	};
 
-	template<typename T> class Form
+	template <typename T>
+	class Form
 	{
 		std::function<void(const T&)> callback;
 	public:
-		explicit Form(std::function<void(T)> callback_) :callback(callback_) {}
+		explicit Form(std::function<void(T)> callback_) : callback(callback_)
+		{
+		}
+
 		void operator()()
 		{
 			FormImpl<T,
-				HasMemberValidatorsQ<T>::value,
-				HasMemberValidateFailMsgQ<T>::value>()(callback);
+			         HasMemberValidatorsQ<T>::value,
+			         HasMemberValidateFailMsgQ<T>::value>()(callback);
 		}
 	};
+
 	class Output
 	{
 		std::wstring out;
 	public:
-		template<typename T, typename...Args >
-		explicit Output(std::wstring msg, T arg, Args...args)
+		template <typename T, typename...Args>
+		explicit Output(std::wstring msg, T arg, Args ...args)
 		{
 			const auto x = msg.find_first_of('#');
 			msg = msg.substr(0, x) + std::to_wstring(arg) + msg.substr(x + 1);
 			Output(msg, args...);
 		}
-		template<typename T>
+
+		template <typename T>
 		explicit Output(const std::wstring& msg, T arg)
 		{
 			const auto x = msg.find_first_of('#');
 			out = msg.substr(0, x) + std::to_wstring(arg) + msg.substr(x + 1);
 		}
-		explicit Output(std::wstring msg) :out(std::move(msg)) {}
+
+		explicit Output(std::wstring msg) : out(std::move(msg))
+		{
+		}
+
 		void operator()() const
 		{
 			std::wcout << out << std::endl;
 		}
 	};
-	template<typename T> class Table
+
+	template <typename T>
+	class Table
 	{
 		const T& data;
 	public:
-		explicit Table(const T& data_) :data(data_) {}
+		explicit Table(const T& data_) : data(data_)
+		{
+		}
+
 		void operator()() const
 		{
 			auto& field = (*data.begin()).field;

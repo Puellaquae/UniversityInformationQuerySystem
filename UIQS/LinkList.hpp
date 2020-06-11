@@ -2,7 +2,8 @@
 #include <utility>
 #include <vector>
 #include <functional>
-template<typename T>
+
+template <typename T>
 class LinkList
 {
 	struct Node
@@ -10,12 +11,17 @@ class LinkList
 		Node* prev = nullptr;
 		Node* next = nullptr;
 		T value;
-		explicit Node(T val = T()) :value(std::move(val)) {}
+
+		explicit Node(T val = T()) : value(std::move(val))
+		{
+		}
+
 		bool operator==(const Node& node)
 		{
 			return next == node.next && prev == node.prev && value == node.value;
 		}
 	};
+
 	Node void_node;
 	Node* head;
 	int _size = 0;
@@ -25,14 +31,16 @@ public:
 		void_node.prev = void_node.next = &void_node;
 		head = &void_node;
 	}
-	LinkList(const LinkList& list) :LinkList()
+
+	LinkList(const LinkList& list) : LinkList()
 	{
 		for (auto it = list.begin(); it != list.end(); ++it)
 		{
 			push_back(*it);
 		}
 	}
-	LinkList(LinkList&& list) noexcept :head(list.head), _size(list._size)
+
+	LinkList(LinkList&& list) noexcept : head(list.head), _size(list._size)
 	{
 		void_node.next = &void_node;
 		head->prev = &void_node;
@@ -41,13 +49,15 @@ public:
 		list.head = &list.void_node;
 		list.void_node.prev = &list.void_node;
 	}
-	LinkList(std::initializer_list<T> list) :LinkList()
+
+	LinkList(std::initializer_list<T> list) : LinkList()
 	{
 		for (auto x : list)
 		{
 			push_back(x);
 		}
 	}
+
 	LinkList& operator=(const LinkList& list)
 	{
 		if (this == &list) { return *this; }
@@ -64,6 +74,7 @@ public:
 		}
 		return *this;
 	}
+
 	LinkList& operator=(LinkList&& list) noexcept
 	{
 		if (this == &list) { return *this; }
@@ -84,6 +95,7 @@ public:
 		list.void_node.prev = &list.void_node;
 		return *this;
 	}
+
 	~LinkList()
 	{
 		Node* pnode = void_node.prev;
@@ -94,19 +106,26 @@ public:
 			pnode = prev;
 		}
 	}
+
 	class Itor
 	{
 		Node* node = nullptr;
-		explicit Itor(Node* pnode) : node(pnode) {}
+
+		explicit Itor(Node* pnode) : node(pnode)
+		{
+		}
+
 		Node* operator->()
 		{
 			return node;
 		}
+
 	public:
 		T& operator*()
 		{
 			return node->value;
 		}
+
 		bool operator++()
 		{
 			if (node != nullptr && node->next != nullptr)
@@ -116,6 +135,7 @@ public:
 			}
 			return false;
 		}
+
 		bool operator--()
 		{
 			if (node != nullptr && node->prev != nullptr)
@@ -125,25 +145,33 @@ public:
 			}
 			return false;
 		}
+
 		bool operator==(Itor it)
 		{
 			return it.node == node;
 		}
+
 		bool operator!=(Itor it)
 		{
 			return it.node != node;
 		}
+
 		friend class LinkList;
 	};
+
 	class ConstItor
 	{
 		const Node* node = nullptr;
 	public:
-		explicit ConstItor(const Node* pnode) : node(pnode) {}
+		explicit ConstItor(const Node* pnode) : node(pnode)
+		{
+		}
+
 		T operator*()
 		{
 			return node->value;
 		}
+
 		bool operator++()
 		{
 			if (node != nullptr && node->next != nullptr)
@@ -153,6 +181,7 @@ public:
 			}
 			return false;
 		}
+
 		bool operator--()
 		{
 			if (node != nullptr && node->prev != nullptr)
@@ -162,15 +191,18 @@ public:
 			}
 			return false;
 		}
+
 		bool operator==(ConstItor it)
 		{
 			return it.node == node;
 		}
+
 		bool operator!=(ConstItor it)
 		{
 			return it.node != node;
 		}
 	};
+
 	void push_front(const T& val)
 	{
 		Node* newhead = new Node(val);
@@ -180,6 +212,7 @@ public:
 		head->prev = newhead;
 		head = newhead;
 	}
+
 	void pop_front()
 	{
 		if (!empty())
@@ -194,9 +227,9 @@ public:
 		else { throw "Do Pop On A Empty List"; }
 #endif
 	}
+
 	void push_back(const T& val)
 	{
-
 		if (!empty())
 		{
 			Node* newend = new Node(val);
@@ -211,6 +244,7 @@ public:
 			push_front(val);
 		}
 	}
+
 	void pop_back()
 	{
 		if (!empty())
@@ -225,26 +259,32 @@ public:
 		else { throw "Do Pop On A Empty List"; }
 #endif
 	}
+
 	bool empty() const
 	{
 		return head == &void_node || _size == 0;
 	}
+
 	T& front()
 	{
 		return head->value;
 	}
+
 	T& back()
 	{
 		return void_node.prev->value;
 	}
+
 	T front() const
 	{
 		return head->value;
 	}
+
 	T back() const
 	{
 		return void_node.prev->value;
 	}
+
 	Itor insert_after(Itor it, const T& val)
 	{
 		if (it->next != &void_node)
@@ -257,6 +297,7 @@ public:
 		}
 		return it;
 	}
+
 	Itor erase(Itor it)
 	{
 		if (empty())
@@ -280,22 +321,27 @@ public:
 		next->prev = prev;
 		return Itor(prev);
 	}
+
 	Itor begin()
 	{
 		return Itor(head);
 	}
+
 	Itor end()
 	{
 		return Itor(&void_node);
 	}
+
 	ConstItor begin() const
 	{
 		return ConstItor(head);
 	}
+
 	ConstItor end() const
 	{
 		return ConstItor(&void_node);
 	}
+
 	int erase(std::function<bool(const T&)> pred)
 	{
 		int ans = 0;
@@ -309,6 +355,7 @@ public:
 		}
 		return ans;
 	}
+
 	int erase(const T& val)
 	{
 		int ans = 0;
@@ -322,15 +369,18 @@ public:
 		}
 		return ans;
 	}
+
 	int size() const
 	{
 		return _size;
 	}
+
 	void swap(Itor ia, Itor ib)
 	{
 		std::swap(ia->value, ib->value);
 	}
-	void sort(std::function<bool(const T&, const T&)>cmp = [](const T& a, const T& b) {return a > b; })
+
+	void sort(std::function<bool(const T&, const T&)> cmp = [](const T& a, const T& b) { return a > b; })
 	{
 		for (Itor i = begin(); i != end(); ++i)
 		{
@@ -345,7 +395,9 @@ public:
 			swap(maxi, i);
 		}
 	}
-	template<typename Tb>bool operator==(const LinkList<Tb> list) const
+
+	template <typename Tb>
+	bool operator==(const LinkList<Tb> list) const
 	{
 		if (std::is_same<Tb, T>::value)
 		{
