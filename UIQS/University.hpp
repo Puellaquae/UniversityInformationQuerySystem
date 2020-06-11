@@ -43,6 +43,7 @@ struct University
 	}
 	static const std::vector<std::wstring> field;
 	static const std::map<std::wstring, std::function<bool(std::wstring)>> validators;
+	static const std::map<std::wstring, std::wstring> validate_fail_msg;
 };
 
 const std::vector<std::wstring> University::field = { L"编号",L"名称",L"地址",L"省份",L"建校时间",L"网址" };
@@ -53,4 +54,12 @@ const std::map<std::wstring, std::function<bool(std::wstring)>> University::vali
 	{L"省份",nullptr},
 	{L"建校时间",Validator::DataValidator},
 	{L"网址",nullptr}
+};
+const std::map<std::wstring, std::wstring> University::validate_fail_msg = {
+	{L"编号",L"请输入整数"},
+	{L"名称",L""},
+	{L"地址",L""},
+	{L"省份",L""},
+	{L"建校时间",L"时间格式 YYYY-MM-DD"},
+	{L"网址",L""}
 };

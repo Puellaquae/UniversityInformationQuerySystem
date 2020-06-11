@@ -30,7 +30,7 @@ namespace Validator {
 		std::wstringstream wss(val);
 		int intq;
 		wss >> intq;
-		return !wss.fail();
+		return !wss.fail() && wss.eof();
 	}
 	bool DataValidator(const std::wstring& val)
 	{
@@ -44,17 +44,18 @@ namespace Validator {
 		{
 			return false;
 		}
-		if (*it++ != '-')
+		if (it == val.end() || *it++ != '-')
 		{
 			return false;
 		}
 		if (!parseInt(it, val.end(), 2, month))
 			return false;
-		if (*it++ != '-')
+		if (it == val.end() || *it++ != '-')
 			return false;
 		if (!parseInt(it, val.end(), 2, day))
 			return false;
 		int months[] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+		if (12 < month || month < 0)return false;
 		if (leap_year(year))months[2 - 1] = 29;
 		if (months[month - 1] < day || day < 0)
 			return false;

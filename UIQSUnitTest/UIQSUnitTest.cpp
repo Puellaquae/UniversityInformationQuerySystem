@@ -1,11 +1,13 @@
 ﻿#include "pch.h"
 #include "CppUnitTest.h"
 #include "../UIQS/LinkList.hpp"
+#include "../UIQS/Validators.hpp"
+#include "../UIQS/Validators.cpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UIQSUnitTest {
-	TEST_CLASS(LinkLish)
+	TEST_CLASS(LinkListTest)
 	{
 	public:
 		TEST_METHOD(LinkListEqual)
@@ -104,6 +106,28 @@ namespace UIQSUnitTest {
 			LinkList<int> listEB({ 2,4,6 });
 			listB.erase([](const int x) {return x % 2 == 1; });
 			Assert::IsTrue(listEB == listB);
+		}
+	};
+	TEST_CLASS(ValidatorTest)
+	{
+		TEST_METHOD(IntValidator)
+		{
+			Assert::IsTrue(Validator::IntValidator(L"123"));
+			Assert::IsFalse(Validator::IntValidator(L"a123"));
+			Assert::IsFalse(Validator::IntValidator(L"1.23"));
+			Assert::IsFalse(Validator::IntValidator(L"123a"));
+		}
+		TEST_METHOD(DateValidator)
+		{
+			Assert::IsTrue(Validator::DataValidator(L"2020-02-02"));
+			Assert::IsTrue(Validator::DataValidator(L"2020-02-29"));
+			Assert::IsFalse(Validator::DataValidator(L"2020-02-2"));
+			Assert::IsFalse(Validator::DataValidator(L"2020-2-02"));
+			Assert::IsFalse(Validator::DataValidator(L"2020-22-02"));
+			Assert::IsFalse(Validator::DataValidator(L"2020-02-30"));
+			Assert::IsFalse(Validator::DataValidator(L"2020.02.30"));
+			Assert::IsFalse(Validator::DataValidator(L"2010"));
+			Assert::IsFalse(Validator::DataValidator(L"2010-10"));
 		}
 	};
 }

@@ -194,16 +194,77 @@ namespace Interact {
 			input_callback(in);
 		}
 	};
-	template<typename T> class Form
+
+	template<typename T>
+	struct HasMemberValidatorsQ
 	{
-		decltype(T::field)& field = T::field;
-		decltype(T::validators)& validators = T::validators;
-		T data = T();
-		std::function<void(const T&)> callback;
+		template <typename _T>static auto check(_T)->typename std::decay<decltype(_T::validators)>::type;
+		static void check(...);
+		using type = decltype(check(std::declval<T>()));
+		enum { value = !std::is_void<type>::value };
+	};
+
+	template<typename T>
+	struct HasMemberValidateFailMsgQ
+	{
+		template <typename _T>static auto check(_T)->typename std::decay<decltype(_T::validate_fail_msg)>::type;
+		static void check(...);
+		using type = decltype(check(std::declval<T>()));
+		enum { value = !std::is_void<type>::value };
+	};
+
+	template<typename T, bool ValidQ, bool MsgQ> class FormImpl
+	{
 	public:
-		explicit Form(std::function<void(T)> callback_) :callback(callback_) {}
-		void operator()()
+		void operator()(std::function<void(const T&)> callback)
 		{
+			decltype(T::field)& field = T::field;
+			T data = T();
+			decltype(T::validators)& validators = T::validators;
+			decltype(T::validate_fail_msg)& invalidMsg = T::validate_fail_msg;
+			std::wstring in;
+			std::function<bool(std::wstring)> validator = nullptr;
+			for (auto& f : field)
+			{
+				bool valPass = true;
+				do
+				{
+					std::wcout << f << ": ";
+					std::wcin >> in;
+					if (std::wcin.eof())
+					{
+						std::wcerr << winput_cancel << std::endl;
+						std::wcin.clear();
+						return;
+					}
+					if (std::wcin.fail())
+					{
+						std::wcerr << winput_wrong_type_abort << std::endl;
+						std::wcin.clear();
+						std::wcin.get();
+						return;
+					}
+					validator = validators.at(f);
+					valPass = validator == nullptr ? true : validator(in);
+					if (!valPass)
+					{
+						std::wcerr << invalidMsg.at(f) << std::endl;
+					}
+				} while (!valPass);
+				data[f] = in;
+			}
+			callback(data);
+		}
+	};
+
+	template<typename T, bool ValidQ> class FormImpl<T, ValidQ, false>
+	{
+	public:
+		void operator()(std::function<void(const T&)> callback)
+		{
+			decltype(T::field)& field = T::field;
+			T data = T();
+			decltype(T::validators) validators = T::validators;
 			std::wstring in;
 			std::function<bool(std::wstring)> validator = nullptr;
 			for (auto& f : field)
@@ -236,6 +297,48 @@ namespace Interact {
 				data[f] = in;
 			}
 			callback(data);
+		}
+	};
+
+	template<typename T> class FormImpl<T, false, false>
+	{
+	public:
+		void operator()(std::function<void(const T&)> callback)
+		{
+			decltype(T::field)& field = T::field;
+			T data = T();
+			for (auto& f : field)
+			{
+				std::wcout << f << ": ";
+				std::wcin >> data[f];
+				if (std::wcin.eof())
+				{
+					std::wcerr << winput_cancel << std::endl;
+					std::wcin.clear();
+					return;
+				}
+				if (std::wcin.fail())
+				{
+					std::wcerr << winput_wrong_type_abort << std::endl;
+					std::wcin.clear();
+					std::wcin.get();
+					return;
+				}
+			}
+			callback(data);
+		}
+	};
+
+	template<typename T> class Form
+	{
+		std::function<void(const T&)> callback;
+	public:
+		explicit Form(std::function<void(T)> callback_) :callback(callback_) {}
+		void operator()()
+		{
+			FormImpl<T,
+				HasMemberValidatorsQ<T>::value,
+				HasMemberValidateFailMsgQ<T>::value>()(callback);
 		}
 	};
 	class Output
