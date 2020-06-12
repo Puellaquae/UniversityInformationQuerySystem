@@ -44,6 +44,9 @@
     <ClInclude Include="Validators.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="FP.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="data.txt">

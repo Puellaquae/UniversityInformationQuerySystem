@@ -13,8 +13,7 @@ class LinkList
 		T value;
 
 		explicit Node(T val = T()) : value(std::move(val))
-		{
-		}
+		{}
 
 		bool operator==(const Node& node)
 		{
@@ -26,6 +25,13 @@ class LinkList
 	Node* head;
 	int _size = 0;
 public:
+
+	using value_type = T;
+	using pointer = T*;
+	using const_pointer = const T*;
+	using reference = T&;
+	using const_reference = const T&;
+
 	LinkList()
 	{
 		void_node.prev = void_node.next = &void_node;
@@ -112,8 +118,7 @@ public:
 		Node* node = nullptr;
 
 		explicit Itor(Node* pnode) : node(pnode)
-		{
-		}
+		{}
 
 		Node* operator->()
 		{
@@ -121,6 +126,13 @@ public:
 		}
 
 	public:
+
+		using value_type = T;
+		using reference = T&;
+		using pointer = T*;
+		using const_reference = const T&;
+		using const_pointer = const T*;
+
 		T& operator*()
 		{
 			return node->value;
@@ -163,9 +175,13 @@ public:
 	{
 		const Node* node = nullptr;
 	public:
+
+		using value_type = T;
+		using const_reference = const T&;
+		using const_pointer = const T*;
+
 		explicit ConstItor(const Node* pnode) : node(pnode)
-		{
-		}
+		{}
 
 		T operator*()
 		{
@@ -202,6 +218,9 @@ public:
 			return it.node != node;
 		}
 	};
+
+	using iterator = Itor;
+	using const_iterator = ConstItor;
 
 	void push_front(const T& val)
 	{

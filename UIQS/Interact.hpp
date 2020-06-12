@@ -3,9 +3,9 @@
 #include <iostream>
 #include <map>
 #include <utility>
+#include "Validators.hpp"
 
-namespace Interact
-{
+namespace Interact {
 	inline void SetChineseEnvironment()
 	{
 		std::locale::global(std::locale(""));
@@ -25,8 +25,7 @@ namespace Interact
 		std::wstring welcome_title;
 	public:
 		explicit Welcome(std::wstring welcomeTitle) : welcome_title(std::move(welcomeTitle))
-		{
-		}
+		{}
 
 		void operator()() const
 		{
@@ -47,14 +46,12 @@ namespace Interact
 			std::function<void()> item_procdure = nullptr;
 
 			Item(const int itmeId, std::wstring itemName, void (*procdure)()) : item_id(itmeId),
-			                                                                    item_name(std::move(itemName)),
-			                                                                    item_procdure(procdure)
-			{
-			}
+				item_name(std::move(itemName)),
+				item_procdure(procdure)
+			{}
 
 			Item(const int itemId, std::wstring itemName) : item_id(itemId), item_name(std::move(itemName))
-			{
-			}
+			{}
 
 			Item() = default;
 		};
@@ -127,8 +124,7 @@ namespace Interact
 		Input(std::wstring placeholder, std::function<void(T)> callback, std::function<bool(T)> validator = nullptr) :
 			input_placeholder(std::move(placeholder)),
 			input_callback(std::move(callback)), input_validator(std::move(validator))
-		{
-		}
+		{}
 
 		void operator()()
 		{
@@ -166,11 +162,10 @@ namespace Interact
 		std::function<bool(std::wstring)> input_validator;
 	public:
 		Input(std::wstring placeholder, std::function<void(std::wstring)> callback,
-		      std::function<bool(std::wstring)> validator = nullptr) : input_placeholder(std::move(placeholder)),
-		                                                               input_callback(std::move(callback)),
-		                                                               input_validator(std::move(validator))
-		{
-		}
+			std::function<bool(std::wstring)> validator = nullptr) : input_placeholder(std::move(placeholder)),
+			input_callback(std::move(callback)),
+			input_validator(std::move(validator))
+		{}
 
 		void operator()() const
 		{
@@ -201,11 +196,10 @@ namespace Interact
 		std::function<bool(std::string)> input_validator;
 	public:
 		Input(std::string placeholder, std::function<void(std::string)> callback,
-		      std::function<bool(std::string)> validator = nullptr) : input_placeholder(std::move(placeholder)),
-		                                                              input_callback(std::move(callback)),
-		                                                              input_validator(std::move(validator))
-		{
-		}
+			std::function<bool(std::string)> validator = nullptr) : input_placeholder(std::move(placeholder)),
+			input_callback(std::move(callback)),
+			input_validator(std::move(validator))
+		{}
 
 		void operator()() const
 		{
@@ -240,7 +234,7 @@ namespace Interact
 	};
 
 	template <typename T>
-	struct HasMemberValidateFailMsgQ
+	struct [[deprecated]] HasMemberValidateFailMsgQ
 	{
 		template <typename _T>
 		static auto check(_T) -> typename std::decay<decltype(_T::validate_fail_msg)>::type;
@@ -249,7 +243,7 @@ namespace Interact
 
 		enum { value = !std::is_void<type>::value };
 	};
-
+	
 	template <typename T, bool ValidQ, bool MsgQ>
 	class FormImpl
 	{
@@ -289,8 +283,7 @@ namespace Interact
 						std::wstring validFailMsg = invalidMsg.at(f);
 						std::wcerr << (validFailMsg.empty() ? winput_invaild_retry : validFailMsg) << std::endl;
 					}
-				}
-				while (!valPass);
+				} while (!valPass);
 				data[f] = in;
 			}
 			callback(data);
@@ -328,14 +321,15 @@ namespace Interact
 						std::wcin.get();
 						return;
 					}
-					validator = validators.at(f);
+					const auto& valid = validators.at(f);
+					validator = valid.validator;
+					std::wstring require = valid.requirement;
 					valPass = validator == nullptr ? true : validator(in);
 					if (!valPass)
 					{
-						std::wcerr << winput_invaild_retry << std::endl;
+						std::wcerr << (require.empty() ? winput_invaild_retry : require) << std::endl;
 					}
-				}
-				while (!valPass);
+				} while (!valPass);
 				data[f] = in;
 			}
 			callback(data);
@@ -378,14 +372,13 @@ namespace Interact
 		std::function<void(const T&)> callback;
 	public:
 		explicit Form(std::function<void(T)> callback_) : callback(callback_)
-		{
-		}
+		{}
 
 		void operator()()
 		{
 			FormImpl<T,
-			         HasMemberValidatorsQ<T>::value,
-			         HasMemberValidateFailMsgQ<T>::value>()(callback);
+				HasMemberValidatorsQ<T>::value,
+				false>()(callback);
 		}
 	};
 
@@ -409,8 +402,7 @@ namespace Interact
 		}
 
 		explicit Output(std::wstring msg) : out(std::move(msg))
-		{
-		}
+		{}
 
 		void operator()() const
 		{
@@ -424,8 +416,7 @@ namespace Interact
 		const T& data;
 	public:
 		explicit Table(const T& data_) : data(data_)
-		{
-		}
+		{}
 
 		void operator()() const
 		{

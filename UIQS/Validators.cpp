@@ -3,10 +3,15 @@
 
 namespace Validator
 {
+	
+	bool IntValidator(const std::wstring& val);
+	const std::wstring int_requirement = L"要求一个整数";
+	bool DataValidator(const std::wstring& val);
+	const std::wstring date_requirement = L"日期格式要求 YYYY-MM-DD";
 	inline bool isnum(const int x) { return '0' <= x && x <= '9'; }
 	inline bool leap_year(const int y) { return y % 400 == 0 || (y % 4 == 0 && y % 100 != 0); }
 
-	bool parseInt(std::wstring::const_iterator& it, const std::wstring::const_iterator& end, const int len, int& res)
+	bool ParseInt(std::wstring::const_iterator& it, const std::wstring::const_iterator& end, const int len, int& res)
 	{
 		res = 0;
 		for (int i = 0; i < len; i++)
@@ -23,7 +28,7 @@ namespace Validator
 		}
 		return true;
 	}
-
+	
 	bool IntValidator(const std::wstring& val)
 	{
 		if (val.empty())
@@ -44,7 +49,7 @@ namespace Validator
 		}
 		auto it = val.begin();
 		int year, month, day;
-		if (!parseInt(it, val.end(), 4, year))
+		if (!ParseInt(it, val.end(), 4, year))
 		{
 			return false;
 		}
@@ -52,11 +57,11 @@ namespace Validator
 		{
 			return false;
 		}
-		if (!parseInt(it, val.end(), 2, month))
+		if (!ParseInt(it, val.end(), 2, month))
 			return false;
 		if (it == val.end() || *it++ != '-')
 			return false;
-		if (!parseInt(it, val.end(), 2, day))
+		if (!ParseInt(it, val.end(), 2, day))
 			return false;
 		int months[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 		if (12 < month || month < 0)return false;
@@ -65,4 +70,7 @@ namespace Validator
 			return false;
 		return true;
 	}
+
+	Validator int_Validator(IntValidator, int_requirement);
+	Validator date_Validator(DataValidator, date_requirement);
 }

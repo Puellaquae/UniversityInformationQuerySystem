@@ -14,8 +14,7 @@ class DataBase
 	LinkList<T> raw{};
 
 	explicit DataBase(LinkList<T> list) : raw(std::move(list))
-	{
-	}
+	{}
 
 	void load()
 	{
@@ -35,6 +34,15 @@ class DataBase
 	}
 
 public:
+
+	using value_type = T;
+	using pointer = T*;
+	using const_pointer = const T*;
+	using reference = T&;
+	using const_reference = const T&;
+	using iterator = typename LinkList<T>::iterator;
+	using const_iterator = typename LinkList<T>::const_iterator;
+
 	void save()
 	{
 		if (file_path.empty())return;
@@ -94,8 +102,7 @@ public:
 	DataBase() = default;
 
 	DataBase(const DataBase<T>& db) : DataBase(db.raw)
-	{
-	}
+	{}
 
 	DataBase(DataBase&& db) noexcept
 	{
@@ -104,7 +111,7 @@ public:
 
 	DataBase<T>& operator=(const DataBase<T>& db)
 	{
-		if (this != &db)
+		if (&db != this)
 		{
 			raw = db.raw;
 		}

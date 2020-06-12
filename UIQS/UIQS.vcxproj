@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="DataBase.hpp" />
     <ClInclude Include="FileIO.hpp" />
+    <ClInclude Include="FP.hpp" />
     <ClInclude Include="LinkList.hpp" />
     <ClInclude Include="Interact.hpp" />
     <ClInclude Include="University.hpp" />

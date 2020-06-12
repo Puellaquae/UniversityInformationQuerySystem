@@ -1,8 +1,8 @@
 ﻿#include <string>
-#include <algorithm>
 #include "Interact.hpp"
 #include "DataBase.hpp"
 #include "University.hpp"
+#include "FP.hpp"
 
 DataBase<University> dataBase = DataBase<University>("data.txt");
 
@@ -13,6 +13,8 @@ int main()
 	typedef Menu::Item item;
 	Welcome(L"高校信息查询系统")();
 
+	int x = Reduce(dataBase.begin(),dataBase.end(),[&](const University& u){return 1;});
+	
 	Menu(L"开始", {
 		item(1, L"信息查询", [] {
 			Menu(L"信息查询", {
@@ -45,7 +47,7 @@ int main()
 			Menu(L"信息维护", {
 				item(1, L"删除信息",[] {
 					Input<std::wstring>(L"请输入要删除的高校编号",[&](const std::wstring& index) {
-						const int res = dataBase.remove([&](const University& u) {return u.id == index; });
+						const int res = dataBase.remove([&](const University& u) {return u[L"编号"] == index; });
 						Output(L"更新共影响#条信息",res)();
 					})();
 				}),
@@ -59,7 +61,7 @@ int main()
 							}
 							Input<std::wstring>(L"请输入新值",[&](const std::wstring& newval) {
 								const int res = dataBase.update(item,newval,[&](const University& u) {
-									return u.id == index;
+									return u[L"编号"] == index;
 								});
 								Output(L"更新共影响#条信息",res)();
 							})();
