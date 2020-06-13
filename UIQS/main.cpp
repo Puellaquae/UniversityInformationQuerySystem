@@ -13,16 +13,17 @@ int main()
 	typedef Menu::Item item;
 	Welcome(L"高校信息查询系统")();
 
-	int x = Reduce(dataBase.begin(),dataBase.end(),[&](const University& u){return 1;});
-	
+	const auto x = Reduce(University::field.begin(), University::field.end(),
+		[&](const std::wstring& a, const std::wstring& b) {return a + L"|" + b; });
+
 	Menu(L"开始", {
-		item(1, L"信息查询", [] {
+		item(1, L"信息查询", [=] {
 			Menu(L"信息查询", {
 				item(1, L"显示所有高校信息",[] {[&] {
 					Table<DataBase<University>>(dataBase.query(L""))();
 					}();
 				}),
-				item(2, L"通过高校[编号|名称|地址|省份|建校时间|网址]查询",[] {
+				item(2, L"通过高校[" + x + L"]查询",[] {
 					Input<std::wstring>(L"请输入要用于查找的项目",[&](const std::wstring& item) {
 						if (!University::contain(item))
 						{

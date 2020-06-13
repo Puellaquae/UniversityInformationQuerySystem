@@ -4,6 +4,7 @@
 #include <map>
 #include <utility>
 #include "Validators.hpp"
+#include "Types.hpp"
 
 namespace Interact {
 	inline void SetChineseEnvironment()
@@ -45,9 +46,11 @@ namespace Interact {
 			std::wstring item_name;
 			std::function<void()> item_procdure = nullptr;
 
-			Item(const int itmeId, std::wstring itemName, void (*procdure)()) : item_id(itmeId),
+			
+			
+			Item(const int itemId, std::wstring itemName, std::function<void()> procdure) : item_id(itemId),
 				item_name(std::move(itemName)),
-				item_procdure(procdure)
+				item_procdure(std::move(procdure))
 			{}
 
 			Item(const int itemId, std::wstring itemName) : item_id(itemId), item_name(std::move(itemName))
@@ -222,27 +225,9 @@ namespace Interact {
 		}
 	};
 
-	template <typename T>
-	struct HasMemberValidatorsQ
-	{
-		template <typename _T>
-		static auto check(_T) -> typename std::decay<decltype(_T::validators)>::type;
-		static void check(...);
-		using type = decltype(check(std::declval<T>()));
-
-		enum { value = !std::is_void<type>::value };
-	};
-
-	template <typename T>
-	struct [[deprecated]] HasMemberValidateFailMsgQ
-	{
-		template <typename _T>
-		static auto check(_T) -> typename std::decay<decltype(_T::validate_fail_msg)>::type;
-		static void check(...);
-		using type = decltype(check(std::declval<T>()));
-
-		enum { value = !std::is_void<type>::value };
-	};
+	BuildHasMemberQ(validators);
+	
+	BuildHasMemberQ(field);
 	
 	template <typename T, bool ValidQ, bool MsgQ>
 	class FormImpl
@@ -372,12 +357,14 @@ namespace Interact {
 		std::function<void(const T&)> callback;
 	public:
 		explicit Form(std::function<void(T)> callback_) : callback(callback_)
-		{}
+		{
+			static_assert(HasMemberfieldQ<T>::value,"Interact::Form: T require member field");
+		}
 
 		void operator()()
 		{
 			FormImpl<T,
-				HasMemberValidatorsQ<T>::value,
+				HasMembervalidatorsQ<T>::value,
 				false>()(callback);
 		}
 	};
@@ -409,14 +396,16 @@ namespace Interact {
 			std::wcout << out << std::endl;
 		}
 	};
-
+	
 	template <typename T>
 	class Table
 	{
 		const T& data;
 	public:
 		explicit Table(const T& data_) : data(data_)
-		{}
+		{
+			static_assert(HasMemberfieldQ<typename T::value_type>::value,"Interact::Table: T require member field");
+		}
 
 		void operator()() const
 		{

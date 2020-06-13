@@ -100,6 +100,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,6 +151,7 @@
     <ClInclude Include="FP.hpp" />
     <ClInclude Include="LinkList.hpp" />
     <ClInclude Include="Interact.hpp" />
+    <ClInclude Include="Types.hpp" />
     <ClInclude Include="University.hpp" />
     <ClInclude Include="Validators.hpp" />
   </ItemGroup>

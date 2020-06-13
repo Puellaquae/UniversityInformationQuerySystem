@@ -4,11 +4,13 @@
 #include <sstream>
 #include "LinkList.hpp"
 #include "FileIO.hpp"
+#include "Types.hpp"
+
+BuildHasMemberQ(field);
 
 template <typename T>
 class DataBase
 {
-	decltype(T::field)& field = T::field;
 	const std::string file_path;
 
 	LinkList<T> raw{};
@@ -42,6 +44,8 @@ public:
 	using const_reference = const T&;
 	using iterator = typename LinkList<T>::iterator;
 	using const_iterator = typename LinkList<T>::const_iterator;
+
+	bool always_save = false;
 
 	void save()
 	{
@@ -77,16 +81,19 @@ public:
 	void insert(const T& val)
 	{
 		raw.push_back(val);
+		if (always_save)save();
 	}
 
 	int remove(std::function<bool(const T&)> where)
 	{
-		return raw.erase(where);
+		const int res = raw.erase(where);
+		if (always_save)save();
+		return res;
 	}
 
 	int update(std::wstring item, const std::wstring& newval, std::function<bool(const T&)> where)
 	{
-		if (std::find(field.begin(), field.end(), item) == field.end()) { return 0; }
+		if (!T::contain(item)) { return 0; }
 		int res = 0;
 		for (auto it = raw.begin(); it != raw.end(); ++it)
 		{
@@ -96,6 +103,7 @@ public:
 				res++;
 			}
 		}
+		if (always_save)save();
 		return res;
 	}
 
@@ -129,6 +137,7 @@ public:
 
 	explicit DataBase(std::string filepath) : file_path(std::move(filepath))
 	{
+		static_assert(HasMemberfieldQ<T>::value,"DataBase: T require member field");
 		load();
 	}
 
@@ -179,7 +188,7 @@ public:
 			{
 				std::wstring f, op, val;
 				cmdin >> f >> op >> val;
-				if (!cmdin.fail() && std::find(field.begin(), field.end(), f) != field.end())
+				if (!cmdin.fail() && T::contain(f))
 				{
 					if (op == L"等于")res = res.where([=](const T& u) { return u[f] == val; });
 					else if (op == L"不等于")res = res.where([=](const T& u) { return u[f] != val; });
@@ -195,7 +204,7 @@ public:
 			{
 				std::wstring f, op;
 				cmdin >> f >> op;
-				if (!cmdin.fail() && std::find(field.begin(), field.end(), f) != field.end())
+				if (!cmdin.fail() && T::contain(f))
 				{
 					if (op == L"升序")res.raw.sort([=](const T& u, const T& v) { return u[f] > v[f]; });
 					else if (op == L"降序")res.raw.sort([=](const T& u, const T& v) { return u[f] < v[f]; });
