@@ -104,6 +104,7 @@ public:
 
 	~LinkList()
 	{
+		if (size() == 0)return;
 		Node* pnode = void_node.prev;
 		while (pnode != &void_node)
 		{

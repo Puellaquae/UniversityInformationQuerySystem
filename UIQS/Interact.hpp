@@ -231,7 +231,7 @@ namespace Interact {
 	public:
 		void operator()(std::function<void(const T&)> callback)
 		{
-			static_assert(true,"This has been deprecated");
+			static_assert(true, "This has been deprecated");
 			decltype(T::field)& field = T::field;
 			T data = T();
 			decltype(T::validators)& validators = T::validators;
@@ -413,8 +413,14 @@ namespace Interact {
 
 		void operator()() const
 		{
+			if (data.size() == 0)
+			{
+				std::wcout << L"--共得到0条信息--\n";
+				return;
+			}
 			auto& field = (*data.begin()).field;
 			std::wcout << L"--共得到" << data.size() << L"条信息--\n";
+			
 			for (auto it : data)
 			{
 				for (const auto& f : field)
