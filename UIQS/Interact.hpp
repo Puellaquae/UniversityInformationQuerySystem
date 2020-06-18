@@ -231,6 +231,7 @@ namespace Interact {
 	public:
 		void operator()(std::function<void(const T&)> callback)
 		{
+			static_assert(true,"This has been deprecated");
 			decltype(T::field)& field = T::field;
 			T data = T();
 			decltype(T::validators)& validators = T::validators;
@@ -302,13 +303,20 @@ namespace Interact {
 						std::wcin.get();
 						return;
 					}
-					const auto& valid = validators.at(f);
-					validator = valid.validator;
-					std::wstring require = valid.requirement;
-					valPass = validator == nullptr ? true : validator(in);
-					if (!valPass)
+					if (validators.find(f) != validators.end())
 					{
-						werror(require.empty() ? winput_invaild_retry : require);
+						const auto& valid = validators.at(f);
+						validator = valid.validator;
+						std::wstring require = valid.requirement;
+						valPass = validator == nullptr ? true : validator(in);
+						if (!valPass)
+						{
+							werror(require.empty() ? winput_invaild_retry : require);
+						}
+					}
+					else
+					{
+						valPass = true;
 					}
 				} while (!valPass);
 				data[f] = in;

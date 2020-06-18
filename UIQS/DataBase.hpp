@@ -7,6 +7,7 @@
 #include "Types.hpp"
 
 BuildHasMemberQ(field);
+BuildHasMemberQ(validators);
 
 template <typename T>
 class DataBase
@@ -33,6 +34,46 @@ class DataBase
 		{
 			std::cerr << "Open File Fail";
 		}
+	}
+	
+	template<bool ValidQ>
+	int update_impl(const std::wstring& item, const std::wstring& newval, std::function<bool(const T&)> where)
+	{
+		if (!T::contain(item)) { return 0; }
+		int res = 0;
+		for (auto it = raw.begin(); it != raw.end(); ++it)
+		{
+			if (where(*it))
+			{
+				(*it)[item] = newval;
+				res++;
+			}
+		}
+		if (always_save)save();
+		return res;
+	}
+
+	template<>
+	int update_impl<true>(const std::wstring& item, const std::wstring& newval, std::function<bool(const T&)> where)
+	{
+		if (!T::contain(item)) { return 0; }
+		if (T::validators.find(item) != T::validators.end())
+		{
+			const auto& valid = T::validators.at(item);
+			const bool valPass = valid.validator(newval);
+			if (!valPass) { return 0; }
+		}
+		int res = 0;
+		for (auto it = raw.begin(); it != raw.end(); ++it)
+		{
+			if (where(*it))
+			{
+				(*it)[item] = newval;
+				res++;
+			}
+		}
+		if (always_save)save();
+		return res;
 	}
 
 public:
@@ -91,20 +132,10 @@ public:
 		return res;
 	}
 
-	int update(std::wstring item, const std::wstring& newval, std::function<bool(const T&)> where)
+
+	int update(const std::wstring& item, const std::wstring& newval, std::function<bool(const T&)> where)
 	{
-		if (!T::contain(item)) { return 0; }
-		int res = 0;
-		for (auto it = raw.begin(); it != raw.end(); ++it)
-		{
-			if (where(*it))
-			{
-				(*it)[item] = newval;
-				res++;
-			}
-		}
-		if (always_save)save();
-		return res;
+		return update_impl<HasMembervalidatorsQ<T>::value>(item, newval, where);
 	}
 
 	DataBase() = default;
@@ -137,7 +168,7 @@ public:
 
 	explicit DataBase(std::string filepath) : file_path(std::move(filepath))
 	{
-		static_assert(HasMemberfieldQ<T>::value,"DataBase: T require member field");
+		static_assert(HasMemberfieldQ<T>::value, "DataBase: T require member field");
 		load();
 	}
 

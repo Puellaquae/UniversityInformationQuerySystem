@@ -71,6 +71,6 @@ namespace Validator
 		return true;
 	}
 
-	Validator int_Validator(IntValidator, int_requirement);
-	Validator date_Validator(DataValidator, date_requirement);
+	Validator int_Validator{IntValidator, int_requirement};
+	Validator date_Validator{DataValidator, date_requirement};
 }
