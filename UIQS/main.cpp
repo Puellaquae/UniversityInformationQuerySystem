@@ -9,7 +9,7 @@ DataBase<University> dataBase = DataBase<University>("data.txt");
 int main()
 {
 	using namespace Interact;
-	SetChineseEnvironment();
+	InitIOEnvironment();
 	typedef Menu::Item item;
 	Welcome(L"高校信息查询系统")();
 

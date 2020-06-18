@@ -3,23 +3,21 @@
 #include <iostream>
 #include <map>
 #include <utility>
+#include <windows.h>
+
 #include "Validators.hpp"
 #include "Types.hpp"
 
+
 namespace Interact {
-	inline void SetChineseEnvironment()
-	{
-		std::locale::global(std::locale(""));
-	}
+	void InitIOEnvironment();
 
 	const std::wstring winput_cancel = L"本次输入已取消";
 	const std::wstring winput_wrong_type_abort = L"错误的输入，本次输入已终止";
 	const std::wstring winput_invaild_abort = L"被拒绝的输入值，本次输入已终止";
 	const std::wstring winput_invaild_retry = L"被拒绝的输入值，请重新输入";
 
-	const std::string input_cancel = "本次输入已取消";
-	const std::string input_wrong_type_abort = "错误的输入，本次输入已终止";
-	const std::string input_invaild_abort = "被拒绝的输入值，本次输入已终止";
+	void werror(const std::wstring& msg);
 
 	class Welcome
 	{
@@ -46,8 +44,6 @@ namespace Interact {
 			std::wstring item_name;
 			std::function<void()> item_procdure = nullptr;
 
-			
-			
 			Item(const int itemId, std::wstring itemName, std::function<void()> procdure) : item_id(itemId),
 				item_name(std::move(itemName)),
 				item_procdure(std::move(procdure))
@@ -89,20 +85,20 @@ namespace Interact {
 			{
 				if (std::wcin.eof())
 				{
-					std::wcerr << L"此菜单的交互已取消\n";
+					werror(L"此菜单的交互已取消");
 					std::wcin.clear();
 					break;
 				}
 				if (std::wcin.fail())
 				{
-					std::wcerr << L"请输入数字序号\n";
+					werror(L"请输入数字序号");
 					std::wcin.clear();
 					std::wstring clearwcin;
 					std::getline(std::wcin, clearwcin);
 				}
 				else if (menu_items.find(cmd) == menu_items.end())
 				{
-					std::wcerr << L"不存在此项\n";
+					werror(L"不存在此项");
 				}
 				else
 				{
@@ -136,13 +132,13 @@ namespace Interact {
 			std::wcin >> in;
 			if (std::wcin.eof())
 			{
-				std::wcerr << winput_cancel << std::endl;
+				werror(winput_cancel);
 				std::wcin.clear();
 				return;
 			}
 			if (std::wcin.fail())
 			{
-				std::wcerr << winput_wrong_type_abort << std::endl;
+				werror(winput_wrong_type_abort);
 				std::wcin.clear();
 				std::wstring clearwcin;
 				std::getline(std::wcin, clearwcin);
@@ -150,7 +146,7 @@ namespace Interact {
 			}
 			if (input_validator != nullptr && !input_validator(in))
 			{
-				std::wcerr << winput_invaild_abort << std::endl;
+				werror(winput_invaild_abort);
 				return;
 			}
 			input_callback(in);
@@ -178,13 +174,13 @@ namespace Interact {
 			std::getline(std::wcin, in);
 			if (std::wcin.eof())
 			{
-				std::wcerr << winput_cancel << std::endl;
+				werror(winput_cancel);
 				std::wcin.clear();
 				return;
 			}
 			if (input_validator != nullptr && !input_validator(in))
 			{
-				std::wcerr << winput_invaild_abort << std::endl;
+				werror(winput_invaild_abort);
 				return;
 			}
 			input_callback(in);
@@ -212,13 +208,13 @@ namespace Interact {
 			std::getline(std::cin, in);
 			if (std::cin.eof())
 			{
-				std::cerr << input_cancel << std::endl;
+				werror(winput_cancel);
 				std::cin.clear();
 				return;
 			}
 			if (input_validator != nullptr && !input_validator(in))
 			{
-				std::cerr << input_invaild_abort << std::endl;
+				werror(winput_invaild_abort);
 				return;
 			}
 			input_callback(in);
@@ -226,9 +222,9 @@ namespace Interact {
 	};
 
 	BuildHasMemberQ(validators);
-	
+
 	BuildHasMemberQ(field);
-	
+
 	template <typename T, bool ValidQ, bool MsgQ>
 	class FormImpl
 	{
@@ -250,13 +246,13 @@ namespace Interact {
 					std::wcin >> in;
 					if (std::wcin.eof())
 					{
-						std::wcerr << winput_cancel << std::endl;
+						werror(winput_cancel);
 						std::wcin.clear();
 						return;
 					}
 					if (std::wcin.fail())
 					{
-						std::wcerr << winput_wrong_type_abort << std::endl;
+						werror(winput_wrong_type_abort);
 						std::wcin.clear();
 						std::wcin.get();
 						return;
@@ -266,7 +262,7 @@ namespace Interact {
 					if (!valPass)
 					{
 						std::wstring validFailMsg = invalidMsg.at(f);
-						std::wcerr << (validFailMsg.empty() ? winput_invaild_retry : validFailMsg) << std::endl;
+						werror(validFailMsg.empty() ? winput_invaild_retry : validFailMsg);
 					}
 				} while (!valPass);
 				data[f] = in;
@@ -295,13 +291,13 @@ namespace Interact {
 					std::wcin >> in;
 					if (std::wcin.eof())
 					{
-						std::wcerr << winput_cancel << std::endl;
+						werror(winput_cancel);
 						std::wcin.clear();
 						return;
 					}
 					if (std::wcin.fail())
 					{
-						std::wcerr << winput_wrong_type_abort << std::endl;
+						werror(winput_wrong_type_abort);
 						std::wcin.clear();
 						std::wcin.get();
 						return;
@@ -312,7 +308,7 @@ namespace Interact {
 					valPass = validator == nullptr ? true : validator(in);
 					if (!valPass)
 					{
-						std::wcerr << (require.empty() ? winput_invaild_retry : require) << std::endl;
+						werror(require.empty() ? winput_invaild_retry : require);
 					}
 				} while (!valPass);
 				data[f] = in;
@@ -335,13 +331,13 @@ namespace Interact {
 				std::wcin >> data[f];
 				if (std::wcin.eof())
 				{
-					std::wcerr << winput_cancel << std::endl;
+					werror(winput_cancel);
 					std::wcin.clear();
 					return;
 				}
 				if (std::wcin.fail())
 				{
-					std::wcerr << winput_wrong_type_abort << std::endl;
+					werror(winput_wrong_type_abort);
 					std::wcin.clear();
 					std::wcin.get();
 					return;
@@ -358,7 +354,7 @@ namespace Interact {
 	public:
 		explicit Form(std::function<void(T)> callback_) : callback(callback_)
 		{
-			static_assert(HasMemberfieldQ<T>::value,"Interact::Form: T require member field");
+			static_assert(HasMemberfieldQ<T>::value, "Interact::Form: T require member field");
 		}
 
 		void operator()()
@@ -396,7 +392,7 @@ namespace Interact {
 			std::wcout << out << std::endl;
 		}
 	};
-	
+
 	template <typename T>
 	class Table
 	{
@@ -404,7 +400,7 @@ namespace Interact {
 	public:
 		explicit Table(const T& data_) : data(data_)
 		{
-			static_assert(HasMemberfieldQ<typename T::value_type>::value,"Interact::Table: T require member field");
+			static_assert(HasMemberfieldQ<typename T::value_type>::value, "Interact::Table: T require member field");
 		}
 
 		void operator()() const

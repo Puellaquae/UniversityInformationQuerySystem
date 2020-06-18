@@ -100,7 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FileIO.cpp" />
+    <ClCompile Include="Interact.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Validators.cpp" />
   </ItemGroup>

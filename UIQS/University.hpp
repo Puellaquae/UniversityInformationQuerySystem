@@ -51,11 +51,11 @@ struct University
 	}
 
 	static const std::vector<std::wstring> field;
-	static const std::map<std::wstring, Validator::Validator> validators;
+	static const std::map<std::wstring, const Validator::Validator&> validators;
 };
 
 const std::vector<std::wstring> University::field = { L"编号", L"名称", L"地址", L"省份", L"建校时间", L"网址" };
-const std::map<std::wstring, Validator::Validator> University::validators = {
+const std::map<std::wstring, const Validator::Validator&> University::validators = {
 	{L"编号", Validator::int_Validator},
 	{L"建校时间", Validator::date_Validator},
 };
